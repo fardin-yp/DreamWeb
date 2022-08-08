@@ -1,4 +1,4 @@
-const Products = require('../../models/products/products');
+const Products = require('../models/products/products');
 import dbConnect from '../../../helpers/dataBase';
 
 dbConnect()
