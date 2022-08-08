@@ -1,5 +1,5 @@
 import dbConnect from '../../../helpers/dataBase';
-import Exclusive from '../../../models/Exclusive/exclusive'
+import Exclusive from '../models/Exclusive/exclusive'
 
 dbConnect()
 
