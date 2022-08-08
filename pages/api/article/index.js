@@ -1,5 +1,4 @@
 import dbConnect from '../../../helpers/dataBase';
-import nextConnect from 'next-connect';
 const request = require("request");
 const Contact = require("../models/contact");
 
