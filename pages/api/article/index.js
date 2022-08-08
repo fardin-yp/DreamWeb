@@ -1,12 +1,8 @@
 import dbConnect from '../../../helpers/dataBase';
-const multer = require('multer');
-import middleware from '../../../middleware/middleware'
 import nextConnect from 'next-connect';
 const request = require("request");
 const Contact = require("../models/contact");
 
-const handler = nextConnect()
-handler.use(middleware)
 
 dbConnect();
 
