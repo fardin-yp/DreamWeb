@@ -1,4 +1,3 @@
-const AdminRoute = require("express").Router();
 const Products = require('../../models/products/products');
 import dbConnect from '../../../helpers/dataBase';
 
@@ -27,6 +26,7 @@ dbConnect()
     }catch(err){
      console.log(err)
     }
-}
     break;
+}
+    
 }
