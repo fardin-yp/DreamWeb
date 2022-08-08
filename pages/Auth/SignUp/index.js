@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import context from '../../../helpers/context/authContext';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Head from 'next/head';
+import Image from 'next/image';
 
 
 export async function getServerSideProps(context) {
@@ -19,7 +20,7 @@ export async function getServerSideProps(context) {
       }
     }
   
-    const usersloggedIn = await fetch("http://dreamweb.runflare.run/authentication/find",{
+    const usersloggedIn = await fetch("https://dreamwebbackend.herokuapp.com/authentication/find",{
       credentials: "include",
       headers:{
         cookie:context.req.cookies.token
@@ -46,17 +47,14 @@ export async function getServerSideProps(context) {
   }
 
 const index = ({json}) => {
-    const [username ,setUserName] = useState('')
-    const [confirm , setConfirmPassword] = useState('')
-    const [password ,setPassword] = useState('')
+    const [username ,setUserName] = useState('');
+    const [family ,setFamily] = useState("")
     const [email ,setEmail] = useState('');
-    const router = useRouter()
-    const [number ,setNumber] = useState('')
-    const { getUserLoggedIn } = useContext(context)
+    const { getUserLoggedIn ,Api} = useContext(context)
     const [err ,setErr] = useState('')
     const [loading ,setLoading] = useState(false);
-    const [seePassword ,setSeePassword] = useState(false);
-    const reRef = useRef('')
+    const reRef = useRef('');
+    const[secc ,setSecc] = useState(false);
 
     async function post(e) {
         e.preventDefault();
@@ -64,21 +62,16 @@ const index = ({json}) => {
         setErr("")
         const captcha = await reRef.current.executeAsync();
         reRef.current.reset();
-        const ex = {email ,number ,username ,password ,confirm ,captcha};
+        const ex = {email ,username ,family  ,captcha};
         try {
-            await axios.post("http://dreamweb.runflare.run/authentication/signup" ,ex ,{withCredentials:true}).then(res => {
+            await axios.post(`${Api}/authentication/sendEmail` ,ex ,{withCredentials:true}).then(res => {
               if(res.data.errMessage){
-                setErr(res.data.errMessage)
+                setErr(res.data)
                 setLoading(false)
             }
             if(!res.data.errMessage){
-              getUserLoggedIn()
-              if(lastpage !== window.document.URL){
-                window.location = lastpage
-              }
-              if(lastpage === window.document.URL){
-                window.location = '/'
-              }  
+                setSecc(true)
+                setLoading(false)
               }
         })
 
@@ -93,19 +86,35 @@ const index = ({json}) => {
    <link rel="icon" href="/art.png" />
     <title> ثبت نام</title>
   </Head>
-            <form style={{height:"75%"}}>
-              <h1>ثبت نام</h1>
-                <input style={{}} onChange={(e) => setUserName(e.target.value)} placeholder="نام کاربری" />
+  {secc === true && <div onClick={() => setSecc(false)} id="backDrop">hello</div>}
+            {secc === true &&
+            <div className="secc-comment">
+                <img src={'/uploads/accept.png'} alt="" />
+                <h1>ایمیل  تایید برای شما ارسال شد!</h1>
+                <h2>لطفا ایمیل خود را از طریق لینک ارسال شده در صندوق پستی خود تایید کنید!</h2>
+                <button onClick={() => {
+                    setEmail('')
+                    setSecc(false)}}>متوجه شدم</button>
+            </div>}
+      <form >
+               <div className="left-login">
+                 <img src="/images/sign-Up.jpg" alt="signUp" />
+               </div>
+               <div className="right-login">
+               <div className="sign-logo" ><a href="/" target="_blank"><Image layout={"fill"} src={"/images/dreamWeb.png"} alt="دریم وب" /></a></div>
+               <b>ثبت نام در دریم وب</b>
+               <p>شما میتوانید برای استفاده از دیگر خدمات  وخدمات پرداخت دریم وب ثبت نام کنبد . درصورت ثبت نام وارد 
+                 <a style={{color:"#1e9e97"}} href="/Auth/Login" >حساب کاربری </a> خود شوید .</p>
+               <p>
+
+               </p>
+               <div id="sign-family">
+              <input onChange={(e) => setUserName(e.target.value)} placeholder="نام " />
+              <input onChange={(e) => setFamily(e.target.value)} placeholder="نام خانوادگی" />
+               </div>
+
                 <input onChange={(e) => setEmail(e.target.value)} placeholder="ایمیل"/>
-                <input onChange={(e) => setNumber(e.target.value)} placeholder="شماره همراه" />
                 <div>
-                <div style={{width:"40%"}} id="password">
-                <input style={{width:"100%"}} type={seePassword ? "text" : "password"} onChange={(e) => setPassword(e.target.value)} placeholder="تکرار رمز عبور  " /> 
-                </div>
-                <div style={{width:"40%"}} id="password">
-                <input style={{width:"100%"}} type={seePassword ? "text" : "password"} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="رمز عبور " /> 
-                <img style={seePassword ? {opacity:"1",left:"0px"}:{left:"0"}} src={'/uploads/view.png'} onClick={() => setSeePassword(prev => !prev)} />
-                </div>
                 </div>
                 <ReCAPTCHA 
                  style={{zIndex:"30",opacity:"0"}}
@@ -113,9 +122,9 @@ const index = ({json}) => {
                  sitekey={json}
                  ref={reRef}
                  />
-                <button onClick={post}>ثبت نام {loading && <div className='loading-spinner'></div>}</button>
-                <div className="Auth-err">{err && <p>{err}</p>}</div>
-                <div style={{flexFlow:"column",alignItems:"flex-start",width:"70%",marginTop:"35px"}}><p style={{pointerEvents:"all"}}> ثبت نام کرده اید؟ <a href="/Auth/Login">ورود</a> </p> </div>
+                <button style={{background:"#1e9e97"}} disabled={loading} onClick={post}>ثبت نام</button>
+                <div className="Auth-err">{err && <p>{err.errMessage}</p>}</div>
+               </div>
             </form>
         </div>
     )

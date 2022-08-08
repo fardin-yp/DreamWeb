@@ -1,5 +1,6 @@
 import axios from 'axios';
-import React,{useState} from 'react'
+import React,{useContext, useState} from 'react';
+import context from '../../../../helpers/context/authContext'
 
 const panel = ({info}) => {
     const [change , setChange] = useState('')
@@ -10,13 +11,14 @@ const panel = ({info}) => {
     const [loading ,setLoading] = useState(false);
     const [error ,setError] = useState("");
     const [edit ,setEdit] = useState(false);
+    const {Api} = useContext(context)
 
     const NewAdmin = async (e) => {
         e.preventDefault()
         const post = {username,roll ,email ,password}
         setLoading(true)
          try {
-            await axios.post("http://dreamweb.runflare.run/auth/signup",post ,{withCredentials:true}).then(res => {
+            await axios.post(`${Api}/auth/signup`,post ,{withCredentials:true}).then(res => {
                 if(res.data.errMessage){
                     setError(res.data.errMessage)
                      setLoading(false)
@@ -35,7 +37,7 @@ const panel = ({info}) => {
         const post = {username ,id:info.find[0]._id ,password}
         setLoading(true)
          try {
-            await axios.put("http://dreamweb.runflare.run/auth/editAdmin",post ,{withCredentials:true}).then(res => {
+            await axios.put(`${Api}/auth/editAdmin`,post ,{withCredentials:true}).then(res => {
                 if(res.data.errMessage){
                     setError(res.data.errMessage)
                      setLoading(false)
@@ -50,7 +52,7 @@ const panel = ({info}) => {
     }
 
     return (
-        <>
+        <div style={{zIndex:"12"}}>
 {info &&  <div  style={{width:"100%",display:"flex",marginTop:"100px",flexFlow:"column",alignItems:"center" ,justifyContent:"space-evenly"}}>
 {change && <div onClick={() => setChange('')} id="backDrop">hello</div>}
 {edit && <div onClick={() => setEdit('')} id="backDrop">hello</div>}
@@ -139,7 +141,7 @@ style={{width:"20px",opacity:"0.7",position:"absolute" ,left:"-10px",top:"0px",c
 
 
 </div>}
-</>
+</div>
     )
 }
 

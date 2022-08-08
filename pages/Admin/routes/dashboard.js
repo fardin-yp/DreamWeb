@@ -1,13 +1,11 @@
-import React,{useState , useEffect ,useRef ,useContext} from 'react'
+import React,{useContext} from 'react';
+import context from "../../../helpers/context/authContext";
 import Chart from '../chart/chart';
-import axios from 'axios';
-import io from 'socket.io-client';
-import context from '../../../helpers/context/authContext';
 
-const dashboard = ({info}) => {
+const dashboard = ({info ,setActive ,setRoute ,sells}) => {
 
-const {users} = useContext(context);
 const date_ob = new Date();
+const {users} = useContext(context);
 
 let date = ("0" + date_ob.getDate()).slice(-2);
 
@@ -19,44 +17,154 @@ let year = date_ob.getFullYear()
 
 const today = `${date}/${month}/${year}`
 
-const filterToday = today && info && info.allSessions.filter(res => res.day === today)
+const filterToday = today && info && info.allSessions.filter(res => res.day === today);
 
-    return (
-        <div className="dashboard">
+
+const allSessions = info && info.allSessions.length || 0;
+
+let onlineUsers = users && users.length || 0;
+
+return (
+      <div className="dashboard">
+       
           <div id="dashboard-1">
             <div>
-               <h1>25000 تومان</h1>
+               <label>
                <p>فروش کل</p>
+               <b>25000 تومان</b>
+               </label>
+               <circle><img src="/images/discount.png" style={{borderRadius:"50%"}}  alt="discount"/></circle>
             </div>
-            <div style={{backgroundColor:"#52bcdc" ,borderRight:"7px solid #2cadd4"}}>
-               <h1><h1>{info && info.allUsers.length || 0}</h1></h1>
+            <div >
+               <label>
                <p> تعداد کل کاربران</p>
+               <b>{info && info.allUsers.length || 0}</b>
+               </label>
+               <circle style={{background:"none"}}><img src="/images/user.png"  alt="discount"/></circle>
             </div>
-            <div style={{backgroundColor:"#f4ab43" ,borderRight:"7px solid #c37c16"}}>
-               <h1>{info && info.allArticles.length || 0}</h1>
+            <div>
+               
+               <label>
                <p> تعداد کل مقالات</p>
+               <b>{info && info.allArticles.length || 0}</b>
+               </label>
+
+               <circle style={{background:"none"}}><img src="/images/pages.png"  alt="discount"/></circle>
+
             </div>
-            <div style={{backgroundColor:"#72b159" ,borderRight:"7px solid #5d9547"}}>
-            <h1>{info && info.allProducts.length || 0}</h1>
+            <div>
+            
+            <label>
                <p >تعداد کل پروژه ها</p>
+               <b>{info && info.allProducts.length || 0}</b>
+               </label>
+               <circle style={{background:"none"}}><img src="/images/chart.png"  alt="discount"/></circle>
             </div>
           </div>
-          <div id="dashboard-2" >
-            <div>
-               <circle><p>{users && users.length/2}</p></circle>
-               <h2>کاربران آنلاین</h2>
-            </div>
-            <div>
-               <circle style={{border:"10px solid #78aedd" }}><p>{info && info.allSessions.length}</p></circle>
-               <h2> کل بازدید کنندگان </h2>
-            </div>
-            <div>
-               <circle style={{border:"10px solid #ff9800" }}><p>{filterToday && filterToday.length}</p></circle>
-               <h2>بازدید کنندگان امروز</h2>
-            </div>
+          <Chart sells={sells} info={info && info.allSessions } />
+          <div className="users-dashboard">
+             <div>
+                <img src="/images/Data backup.png" alt="users" />
+                <label>
+                <p>بازدید های کل  </p>
+                <b>{allSessions}</b>
+                </label>
+
+             </div>
+             <div>
+                 <label>
+                 <p> کاربران آنلاین  </p>
+                 <b>{onlineUsers}</b>
+                 </label>
+                 <img src="/images/International business meeting.png" alt="users" />
+             </div>
           </div>
-         <Chart info={info && info.allSessions} />
-        </div>
+          <div className="tabels">
+            <div>
+              <label>
+                  <b >آخرین سفارشات</b>
+                  <button onClick={() => setActive("sells")}>همه سفارشات </button>
+              </label>
+              <table>
+              <thead >
+                    <th>
+                        خریدار
+                    </th>
+                    <th >
+                        عنوان
+                    </th>
+                    <th >
+                        تاریخ خرید
+                    </th>
+                </thead>
+               <tbody >
+               {sells && sells.map(res => {
+                return <tr >
+                       <td>
+                       { res.product.post?.name || res.product.json?.title || res?.description }
+                       </td>
+                       <td >
+                           {res.buyer}
+                       </td>
+                       <td >
+                           {res.date}
+                       </td>
+                   </tr>
+                   })}
+               </tbody> 
+                <tfoot></tfoot>
+            </table>
+
+         </div>
+
+         <div>
+              <label>
+                  <b>آخرین پروژه ها</b>
+                  <button onClick={() => {
+                     setRoute("edit-projects")
+                     setActive("projects")}}>همه پروژه ها</button>
+              </label>
+              <table>
+              <thead >
+                    <th>
+                        عنوان
+                    </th>
+                    <th >
+                        دسته بندی
+                    </th>
+                    <th >
+                        قیمت
+                    </th>
+                    <th >
+                        تاریخ 
+                    </th>
+                </thead>
+                <tbody>
+                   {info && info.allProducts.map(res => {
+                      return <tr>
+                        <td>
+                           {res.name}
+                       </td>
+                       <td>
+                           {res.category}
+                       </td>
+                       <td>
+                           {res.price}
+                       </td>
+                       <td>
+                           {res.timestamp}
+                       </td>
+                      </tr>
+                   })}
+                </tbody>
+               <tbody >
+               </tbody> 
+                <tfoot></tfoot>
+            </table>
+
+         </div>
+      </div>
+   </div>
     )
 }
 

@@ -1,7 +1,8 @@
-import {useState ,useEffect} from 'react';
+import {useState ,useEffect, useContext} from 'react';
 import axios from 'axios';
 import close from '../images/cancel (1).png';
 import Image from 'next/image';
+import context from '../../../helpers/context/authContext';
 
 
 const Seo = ({Seoroute,info}) => {
@@ -18,6 +19,7 @@ const Seo = ({Seoroute,info}) => {
     const [value ,setValue] = useState('');
     const [price ,setPrice] = useState('');
     const [payPrice ,setPayPrice] = useState('');
+    const {Api} = useContext(context)
 
   useEffect(() => {
 if(info){
@@ -39,7 +41,7 @@ if(info){
    setLoading(true)
     try{  
         if(Seoroute === "new-seo"){
-            await axios.post("http://dreamweb.runflare.run/adminRoute/Seo" , post ,{withCredentials:true} ).then(res => {
+            await axios.post(`${Api}/adminRoute/Seo` , post ,{withCredentials:true} ).then(res => {
                 if(res.data.errMessage){
                     alert(res.data.errMessage)
                     setLoading(false)
@@ -59,7 +61,7 @@ const post = {title ,route , description , keywords , ogType ,ogUrl ,id};
 
      try{      
         if(Seoroute === "edit-seo"){
-         await axios.put("http://dreamweb.runflare.run/adminRoute/SeoUpdate" , post ,{withCredentials:true} ).then(res => {
+         await axios.put(`${Api}/adminRoute/SeoUpdate` , post ,{withCredentials:true} ).then(res => {
             
              if(res.data.errMessage){
                  alert(res.data.errMessage)
@@ -78,7 +80,7 @@ const post = {title ,route , description , keywords , ogType ,ogUrl ,id};
     setLoading(true)
      try{  
          if(Seoroute === "seo-service"){
-             await axios.post("http://dreamweb.runflare.run/adminRoute/seoService" , post ,{withCredentials:true} ).then(res => {
+             await axios.post(`${Api}/adminRoute/seoService` , post ,{withCredentials:true} ).then(res => {
                  if(res.data.errMessage){
                      alert(res.data.errMessage)
                      setLoading(false)
@@ -134,8 +136,8 @@ const filter = info && info.filter(res => res.route === select);
             </form>}
 
             {Seoroute === 'edit-seo' &&  
-            <div style={{margin:"auto"}}>
-            <select style={{ marginTop:"-20px",zIndex:"12",width:"80%",background:"#ff9800",color:"white"}} onChange={(e) => setSelect(e.target.value)}>      
+            <div style={{margin:"auto",zIndex:"20"}}>
+            <select style={{ marginTop:"-20px",width:"80%",zIndex:"12",background:"#ff9800",color:"white"}} onChange={(e) => setSelect(e.target.value)}>      
                 <option value="">انتخاب دسته بندی دامنه ها</option>
                 <option value="home">صفحه اصلی</option>
                 <option value="exclusive">سایت اختصاصی</option>

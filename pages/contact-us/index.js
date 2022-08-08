@@ -2,7 +2,6 @@ import Navbar from "../../components/navbar/navbar";
 import Footer from '../../components/footer/footer';
 import {useContext, useRef, useState ,useEffect} from 'react';
 import axios from 'axios';
-import LiveChat from '../../components/liveChat/liveChat';
 import ReCAPTCHA from 'react-google-recaptcha';
 import context from '../../helpers/context/authContext'
 import Head from 'next/head';
@@ -13,10 +12,10 @@ export async function getStaticProps() {
 
 //   const json = process.env.INVIS_CAPTCHA || null
 const json = "6LfMd88dAAAAANh6pGI5JNg-q4m3gkwi8BlYKmHo"
-  const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/contact');
+  const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/contact');
   const jsonSeo = await resSeo.json();
 
-  const getLinks = await fetch(`http://dreamweb.runflare.run/allRoutes/Links`);
+  const getLinks = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/Links`);
   const links = await getLinks.json()
 
 
@@ -33,7 +32,7 @@ const json = "6LfMd88dAAAAANh6pGI5JNg-q4m3gkwi8BlYKmHo"
 
 const index = ({json ,jsonSeo ,links}) => {
 
-    const {find} = useContext(context);
+    const {find ,Api} = useContext(context);
     const [name ,setName] = useState(find.username?find:"")
     const [des ,setDes] = useState()
     const [message ,setMessage] = useState()
@@ -51,14 +50,16 @@ const index = ({json ,jsonSeo ,links}) => {
         reRef.current.reset();
         const ex = {email ,message ,name ,des ,captcha};
         try {
-            await axios.post('https://dreamweb.runflare.run/allRoutes/contact' ,ex).then(res => {
+            await axios.post(`/api/contact` , ex ,{withCredentials:true}).then(res => {
               if(res.data.errMessage){
-                  setErr(res.data)
-                  setLoading(false)
-              }
-              setEMessage(res.data.Message)
-              setLoading(false)
-        })
+                setErr(res.data)
+                setLoading(false)
+            }
+            setEMessage(res.data.Message)
+            setLoading(false)
+            setErr(null)
+            });
+ 
         }catch(err){
  
         }
@@ -87,7 +88,7 @@ const index = ({json ,jsonSeo ,links}) => {
     <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
     <meta property="og:locale" content="Fa_IR" /> 
 </Head>
-            <LiveChat />
+         
             <Navbar />
             <div className="contact-us">
             <div>

@@ -2,12 +2,12 @@ import React,{ useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from "../../../components/navbar/navbar";
 import Footer from "../../../components/footer/footer";
-import LiveChat from '../../../components/liveChat/liveChat';
+
 import Head from 'next/head';
 
 export async function getServerSideProps(context) {
 
-    const res = await fetch(`http://dreamweb.runflare.run/allRoutes/allArticles`)
+    const res = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/allArticles`)
     const json = await res.json();
   
     return {
@@ -33,7 +33,7 @@ const filter = json.filter(res => res.title.toLowerCase().includes(route.toLocal
     <title> نتیجه جستجو برای {route}</title>
     <meta property="og:locale" content="Fa_IR" /> 
   </Head>
-            <LiveChat />
+         
            <Navbar /> 
            <div className="article-search">
            <form onSubmit={searching}>

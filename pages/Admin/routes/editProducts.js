@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import Edit from '../editor/edit';
 import Loading from '../images/loadingshop.gif';
 import Image from 'next/image';
+import context from '../../../helpers/context/authContext'
 
 const editProducts = () => {
 
@@ -20,10 +21,11 @@ const editProducts = () => {
     const [edit ,setEdit] = useState(false);
     const [id, setId] = useState(false);
     const [deleteImage ,setDeleteImage] = useState('');
-    const [deleteProduct , setDeleteProduct] = useState(null)
+    const [deleteProduct , setDeleteProduct] = useState(null);
+    const {Api} = useContext(context)
 
     const getProducts = async () => {
-        await axios.get("http://dreamweb.runflare.run/allRoutes/allProducts").then(res => {
+        await axios.get(`${Api}/allRoutes/allProducts`).then(res => {
             setProducts(res.data)
         })
     }
@@ -45,7 +47,7 @@ const editProducts = () => {
         formData.append("deleteImage" , deleteImage);
         formData.append("id" , id);
     
-        await axios.put("http://dreamweb.runflare.run/adminRoute/ProductsUpdate" , formData ,{withCredentials:true} ).then(res => {
+        await axios.put(`${Api}/adminRoute/ProductsUpdate` , formData ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data.errMessage)
                 setErr(res.data.errMessage)
@@ -75,7 +77,7 @@ const editProducts = () => {
     const deletePR = async (e) => {
         e.preventDefault();
         const post ={ image:deleteProduct.image}
-        await axios.put(`http://dreamweb.runflare.run/adminRoute/delete/product/${deleteProduct._id}`,post ,{withCredentials:true} ).then(res => {
+        await axios.put(`${Api}/adminRoute/delete/product/${deleteProduct._id}`,post ,{withCredentials:true} ).then(res => {
             alert(res.data.Message)
             setLoading(false);
             setDeleteProduct(null)
@@ -97,25 +99,32 @@ const editProducts = () => {
                 <h1>آیا این پست حذف شود ؟</h1>
                 <button style={{background:"#fe1919"}} onClick={deletePR}> حذف پست</button>
             </div>}
-{!edit && <form style={{marginTop:"-10px",height:"600px",maxHeight:"600px",position:"relative",marginLeft:"0"}} encType="multipart/form-data">
-        <div style={{height:"max-content",width:"90%" ,background:"#3f51b5",padding:"10px" 
-            ,borderRadius:"10px",color:"white"}}>ویرایش پروژه</div>
-        <input style={{marginTop:"10px"}} placeholder="جستجو..." onChange={(e) => setFilter(e.target.value)} />
-        <div className="tableEdit-holder" >
+
+                
+        {!edit && 
+        <div className="edit-tabels" style={{zIndex:"13"}}> 
             {products.length === 0 && 
             <div style={{width:"100%" ,height:"450px" ,position:"relative",margin:"auto"}}>
                 <Image src={Loading} layout={"fill"} alt="" />
-            </div>}
-            {products.length > 0 && <table className="edit-table"> 
-                <thead  >
-                    <th style={{padding:"20px" ,background:"#ff5722"}}>
-                        <a href="#">تصویر</a>
+            </div>} 
+            <div>
+            <label> 
+            <b>ویرایش پروژه ها</b>
+            <input style={{marginTop:"10px"}} placeholder="جستجو..." onChange={(e) => setFilter(e.target.value)} />
+        </label>
+        {products.length > 0 && <table>
+                <thead>
+                    <th >
+                        تصویر
                     </th>
-                    <th style={{padding:"20px" ,background:"#ff5722"}}>
-                        <a href="#"> نام </a>
+                    <th >
+                         نام 
                     </th>
-                    <th style={{padding:"20px" ,width:"20%" ,background:"#ff5722"}}>
-                        <a href="#">دیدگاه</a>
+                    <th >
+                         دسته بندی 
+                    </th>
+                    <th >
+                        دیدگاه
                     </th>
                 </thead>
                 <tbody >
@@ -132,7 +141,7 @@ const editProducts = () => {
                             setDeleteImage(res.image)
                             setProperty(res.Property)
                             setId(res._id)
-                        }} className="tr-all">
+                        }} >
 
                        <td>
                            <img src={`/uploads/${res.image}`} alt="" />
@@ -141,20 +150,25 @@ const editProducts = () => {
                            <a>{res.name}</a>
                        </td>
                        <td >
+                           <a>{res.category}</a>
+                       </td>
+                       <td >
                            <a>{res.comments.length}</a>
                        </td>
                    </tr>
                    })}
                 </tbody> 
       <tfoot></tfoot>
+        </table>
+}
+        </div>
+        </div>
+        }
 
-        </table>}
-                    </div>
-            </form>}
             {edit.name && 
             <form style={{height:"100%",marginTop:"-10px"}} encType="multipart/form-data">
             <div style={{width:"90%" ,background:"#3f51b5",padding:"10px" 
-            ,borderRadius:"10px",color:"white",position:"relative"}}>ویرایش پروژه {edit.name} 
+            ,borderRadius:"10px",color:"white",position:"relative"}}> ویرایش پروژه {edit.name} 
             <button onClick={sure} style={{top:"-17px",padding:"10px",position:"absolute",left:"3px",fontSize:"12px",width:"max-content" ,height:"max-content",background:"red"}}>حذف پروژه</button></div>
               <input placeholder="title" value={name} onChange={(e) => setName(e.target.value)} />
                 <input placeholder="قیمت" value={price} type='text' onChange={(e) => setPrice(e.target.value)} />

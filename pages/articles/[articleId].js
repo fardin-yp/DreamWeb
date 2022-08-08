@@ -5,16 +5,17 @@ import cal from './calendar.png';
 import Image from 'next/image';
 import profile from './profile.png';
 import views from './view.png';
-import LiveChat from '../../components/liveChat/liveChat'
+
 import Comment from './comment';
 import Head from 'next/head';
 import {useRouter} from 'next/router'
+import Share from '../../helpers/share/Share';
 
 
 export async function getServerSideProps(context) {
   
   const con = context.params.articleId;
-  const res = await fetch('http://dreamweb.runflare.run/allRoutes/fullArticle/' + con)
+  const res = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/fullArticle/' + con)
   const json = await res.json();
 
   const reCaptcha ="6Lc5scwdAAAAABhLprESfkYx74BP2mEGvh9Ck01p";
@@ -27,7 +28,7 @@ export async function getServerSideProps(context) {
       }
     }
   }
-  const loggedIn = await fetch("http://dreamweb.runflare.run/auth/loggedIn",{
+  const loggedIn = await fetch("https://dreamwebbackend.herokuapp.com/auth/loggedIn",{
     credentials: "include",
     headers:{
       cookie:context.req.cookies.Admin
@@ -64,7 +65,7 @@ const index = ({json ,reCaptcha ,admin}) => {
              <meta property="og:locale" content="Fa_IR" /> 
         </Head>
 { json && <div style={{alignItems:"center"}} className="layout">
-          <LiveChat />
+          
             <Navbar />
             <div className="full-article">
               {json && 
@@ -83,6 +84,8 @@ const index = ({json ,reCaptcha ,admin}) => {
               <div className="other-Articles"></div>
               
             </div>
+
+            <Share title={json.title} />
             <Comment admin={admin} type={"articles"} reCaptcha={reCaptcha} id={json._id} comments={json.comments} link={"ArticleComment"} />
             
             <Footer />

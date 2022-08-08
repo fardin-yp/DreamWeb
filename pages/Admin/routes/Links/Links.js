@@ -1,5 +1,6 @@
-import React,{useEffect, useState} from 'react';
+import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
+import context from '../../../../helpers/context/authContext'
 
 
 const Users = ({info}) => {
@@ -11,6 +12,7 @@ const Users = ({info}) => {
     const [telegram ,setTelegram ] = useState("");
     const [phone ,setPhone ] = useState("");
     const [twitter ,setTwitter ] = useState("");
+    const {Api} = useContext(context)
 
     useEffect(() => {
         if(info){
@@ -20,7 +22,7 @@ const Users = ({info}) => {
 
     const sendLinks = async (e) => {
         e.preventDefault()
-        await axios.post(`http://dreamweb.runflare.run/adminRoute/Links`,{withCredentials:true}).then(res => {
+        await axios.post(`${Api}/adminRoute/Links`,{withCredentials:true}).then(res => {
             alert(res.data)
 
          })
@@ -28,7 +30,7 @@ const Users = ({info}) => {
 
     useEffect(() => {
         const getLinks = async () => {
-            await axios.get(`http://dreamweb.runflare.run/allRoutes/Links`,{withCredentials:true}).then(res => {
+            await axios.get(`${Api}/allRoutes/Links`,{withCredentials:true}).then(res => {
                 setEmail(res.data.email);
                 setPhone(res.data.phone);
                 setInstagram(res.data.instagram);

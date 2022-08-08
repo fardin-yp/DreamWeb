@@ -6,7 +6,9 @@ async function dbConnect (){
         return;
     }
 
-    const db = await mongoose.connect(process.env.MONGODB_URI , {
+    const db = await mongoose
+    .connect("mongodb+srv://fardin:fardin0078@realmcluster.eepea.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    ,{
         useNewUrlParser:true,
         useUnifiedTopology:true
     });

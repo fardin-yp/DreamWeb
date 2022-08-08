@@ -1,5 +1,6 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useContext} from 'react';
+import context from "../../../../helpers/context/authContext"
 
 const Messages = ({route}) => {
     const [contacts ,setContacts] = useState(null);
@@ -7,11 +8,14 @@ const Messages = ({route}) => {
     const [exclusives ,setExclusives] = useState(null);
     const [Delete ,setDelete] = useState(null);
     const [loading ,setLoading] = useState(false);
-    const [slice ,setSlice] = useState(10)
+    const [slice ,setSlice] = useState(10);
+    const {Api} = useContext(context);
+    const [select ,setSelect] = useState(null);
+    const [sure ,setSure] = useState(false)
 
     useEffect(() => {
      const getMessages = async () => {
-         axios.get("http://dreamweb.runflare.run/adminRoute/getMessages" , {withCredentials:true}).then(res => {
+         axios.get(`${Api}/adminRoute/getMessages` , {withCredentials:true}).then(res => {
              setContacts(res.data.Contacts);
              setConsaltings(res.data.Consaltings);
              setExclusives(res.data.Exclusives)
@@ -21,10 +25,10 @@ const Messages = ({route}) => {
     },[])
 
    const deleteMessages = async () => {
-      const post = {type:Delete.type ,id:Delete._id}
+      const post = {type:Delete.type ,id:Delete.id}
       setLoading(true)
       try{
-        await axios.post("http://dreamweb.runflare.run/adminRoute/deleteMessages" ,post , {withCredentials:true}).then(res => {
+        await axios.post(`${Api}/adminRoute/deleteMessages` ,post , {withCredentials:true}).then(res => {
            if(res.data.Consaltings){
                setConsaltings(res.data.Consaltings);
                setLoading(false);
@@ -53,10 +57,11 @@ const Messages = ({route}) => {
     setSlice(10)
    },[route]);
 
+console.log(select)
     return (
         <div className="products" 
         style={{flexFlow:"column",alignItems:"center",justifyContent:"flex-start"}}>
-            {Delete && 
+            {sure && 
             <div className="secc-comment" style={{zIndex:"151"}}>
               <h1>آیااین پیام حذف شود؟</h1>
               <img src={'/uploads/warning.png'} alt="" />
@@ -65,70 +70,136 @@ const Messages = ({route}) => {
                   حذف پیام
               </button>
             </div>}
-            {Delete && <div style={{zIndex:"1"}} onClick={() => setDelete(null)} id="backDrop">hello</div>}
-            {route === "send-exclusive" && 
-            <>
-            <div style={{height:"max-content",width:"70%" ,background:"#3f51b5",padding:"10px" 
-            ,borderRadius:"10px",color:"white"}}>درخواست های وبسایت اختصاصی</div>
+            
+            {sure && <div style={{zIndex:"26"}}  onClick={() => setSure(false)} id="backDrop">hello</div>}
+            {select && <div onClick={() => setSelect(null)} id="backDrop">hello</div>}
+            {select && <div className="select-Message">
+                <button onClick={() => setSure(true)}>Delete</button>
+                 <label>
+                     <input value={`نام : ${select.name}`} />
+                     {select.email && <input value={`ایمیل : ${select.email}`} />}
+                     {select.number && <input value={`شماره همراه : ${select.number}`} />}
+                     {select.message && <input value={` موضوع پیام : ${select.message}`} />}
+                     <input value={` تاریخ : ${select.timestamp}`} />
+                 </label>
+                 {select.des && <textarea value={`پیام : ${select.des}`} />}
+                </div>}
+    {route === "send-exclusive" && 
+           <>
+<div className="tabels" style={{width:"100%" ,justifyContent:"center" ,zIndex:"13"}}>
+<div>
+  <label>
+      <b>درخواست های وبسایت اختصاصی</b>
+  </label>
+  <table>
+  <thead >
+        <th>
+        نام و نام خانوادگی
+        </th>
+        <th>
+         ایمیل
+        </th>
+        <th>
+        شماره تماس
+        </th>
+    </thead>
+   <tbody >
+   {exclusives && exclusives.slice(0,slice).map(res => {
+            return <tr onClick={() => {
+            setDelete({type:"exclusives" , id:res._id})
+            setSelect(res)}} 
 
-            {exclusives && exclusives.slice(0,slice).map(res => {
-            return <div className="Admin-messages" key={res._id}>
-            <img src="/images/cancel (1).png" onClick={() => setDelete({...res ,type:"exclusives"})} alt="" /> 
-                    <b>پیام از  : {res.name}</b>
-                    <p>شماره تماس : {res.number}</p>
-                    <p> ایمیل : {res.email}</p>
-                    <p> توضیحات : {res.des}</p>
-                </div>
+            style={{backgroundColor:"white" ,position:"relative"}} key={res._id}>
+                    <td style={{width:"25%"}}>{res.name}</td>
+                    <td style={{width:"50%"}}>{res.email}</td>
+                    <td style={{width:"25%"}}>{res.number}</td>
+                </tr>
             })}
-            { exclusives && exclusives.length > slice && <div 
-            style={{
-                cursor:"pointer",display:"flex", alignItems:"center" ,justifyContent:"center",background:"white" ,padding:"0px 15px",borderRadius:"10px",boxShadow:" 0px 2px 8px rgba(0,0,0,0.1) , 0px 0px 15px rgba(0,0,0,0.1)"}} 
-            onClick={addSlice}>
-                <img style={{width:"20px"}} src={'/images/down-arrow.png'} alt="" />
-                <p style={{fontWeight:"600",fontSize:"18px" ,opacity:"0.7"}}>نتایج بیشتر </p></div>}
+   </tbody> 
+    <tfoot></tfoot>
+</table>
+</div>
+</div>
+            
+            
+
             </>
         }
         {route === "send-consulting" && 
             <>
-            <div style={{height:"max-content",width:"70%" ,background:"#3f51b5",padding:"10px" 
-            ,borderRadius:"10px",color:"white"}}>درخواست های مشاوره</div>
-
-            {consaltings && consaltings.map(res => {
-            return <div className="Admin-messages" key={res._id}>
-            <img src="/images/cancel (1).png" onClick={() => setDelete({...res ,type:"consaltings" })} alt="" /> 
-                    <b>پیام از  : {res.name}</b>
-                    <p>شماره تماس : {res.number}</p>
-                </div>
+            <div className="tabels" style={{width:"100%" ,justifyContent:"center" ,zIndex:"13"}}>
+            <div>
+              <label>
+                  <b>درخواست های مشاوره</b>
+              </label>
+              <table>
+              <thead >
+                    <th>
+                    نام و نام خانوادگی
+                    </th>
+                    <th >
+                    شماره تماس
+                    </th>
+                </thead>
+               <tbody >
+               {consaltings && consaltings.map(res => {
+            return <tr onClick={() => {
+                setSelect(res)
+                setDelete({type:"consaltings" , id:res._id})
+                }} className="Admin-messages" key={res._id}>
+                    <td style={{width:"50%"}}>{res.name}</td>
+                    <td style={{width:"50%"}}>{res.number}</td>
+                </tr>
             })}
-            { consaltings && consaltings.length > slice && <div 
-            style={{
-                cursor:"pointer",display:"flex", alignItems:"center" ,justifyContent:"center",background:"white" ,padding:"0px 15px",borderRadius:"10px",boxShadow:" 0px 2px 8px rgba(0,0,0,0.1) , 0px 0px 15px rgba(0,0,0,0.1)"}} 
-            onClick={addSlice}>
-                <img style={{width:"20px"}} src={'/images/down-arrow.png'} alt="" />
-                <p style={{fontWeight:"600",fontSize:"18px" ,opacity:"0.7"}}>نتایج بیشتر </p></div>}
-            </>
+               </tbody> 
+                <tfoot></tfoot>
+            </table>
+
+         </div>
+    </div>
+     </>
         }
         {route === "contact-us" && 
             <>
-            <div style={{height:"max-content",width:"70%" ,background:"#3f51b5",padding:"10px" 
-            ,borderRadius:"10px",color:"white"}}>پیام های ارتباط با ما</div>
-
-            {contacts && contacts.map(res => {
-            return <div className="Admin-messages" key={res._id}>
-            <img src="/images/cancel (1).png" onClick={() => setDelete({...res ,type:"contacts"})} alt="" /> 
-                    <b>پیام از  : {res.name}</b>
-                    <p> ایمیل : {res.email}</p>
-                    <p> موضوع پیام : {res.message}</p>
-                    <p> توضیحات : {res.des}</p>
-                </div>
+        <div className="tabels" style={{width:"100%" ,justifyContent:"center" ,zIndex:"13"}}>
+            <div>
+              <label>
+                  <b>پیام های ارتباط با ما</b>
+              </label>
+              <table>
+              <thead >
+                    <th>
+                    نام و نام خانوادگی
+                    </th>
+                    <th>
+                     ایمیل
+                    </th>
+                    <th>
+                    موضوع پیام 
+                    </th>
+                    <th>
+                    تاریخ
+                    </th>
+                </thead>
+               <tbody >
+               {contacts && contacts.map(res => {
+            return <tr onClick={() => {
+            setDelete({type:"contacts" , id:res._id})
+            setSelect(res)}} 
+             style={{backgroundColor:"white"}} key={res._id}>
+                    <td style={{width:"20%"}}> {res.name}</td>
+                    <td style={{width:"40%"}}> {res.email}</td>
+                    <td style={{width:"20%"}}> {res.message}</td>
+                    <td style={{width:"20%"}}> {res.timestamp}</td>
+                </tr>
             })}
-            { contacts && contacts.length > slice && <div 
-            style={{
-                cursor:"pointer",display:"flex", alignItems:"center" ,justifyContent:"center",background:"white" ,padding:"0px 15px",borderRadius:"10px",boxShadow:" 0px 2px 8px rgba(0,0,0,0.1) , 0px 0px 15px rgba(0,0,0,0.1)"}} 
-            onClick={addSlice}>
-                <img style={{width:"20px"}} src={'/images/down-arrow.png'} alt="" />
-                <p style={{fontWeight:"600",fontSize:"18px" ,opacity:"0.7"}}>نتایج بیشتر </p></div>}
-            </>
+               </tbody> 
+                <tfoot></tfoot>
+            </table>
+
+         </div>
+    </div>
+     </>
         }
 
         </div>

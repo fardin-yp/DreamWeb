@@ -6,11 +6,10 @@ import context from '../../helpers/context/authContext';
 import Image from 'next/image';
 import send from '../../public/images/send.png';
 
+
+
 const liveChat = () => {
 
-    const [openChat ,setOpenChat] = useState(false);
-    const [allMessages , setAllMessages] = useState(null);
-    const [conversation ,setConversation] = useState(null);
     const [email ,setEmail] = useState("");
     const [username ,setUserName] = useState("");
     const [arrivalMessage ,setArrivalMessage] =useState(null);
@@ -19,9 +18,10 @@ const liveChat = () => {
     const [users ,setUsers] = useState(null);
     const [error ,setError] = useState(null);
     const socket = useRef();
-    const {find} = useContext(context);
+    const {find ,Api} = useContext(context);
     const messagesEndRef = useRef(null);
-    const [notification ,setNotification] = useState(false)
+    const [notification ,setNotification] = useState(false);
+
 
 
     let classe = ["chat"];
@@ -39,7 +39,7 @@ const liveChat = () => {
 
 
     useEffect(() => {
-     socket.current = io("ws://dreamweb.runflare.run:27017")
+     socket.current = io(`ws://localhost:27017`)
      socket.current.on("getMessage" , data => {
         setArrivalMessage({
             sender:data.senderId,
@@ -67,11 +67,11 @@ const liveChat = () => {
     },[conversation])
 
     const getconversation = async () => {
-        await axios.get("http://dreamweb.runflare.run/conversation",{withCredentials:true}).then((res) => {
+        await axios.get(`${Api}/conversation`,{withCredentials:true}).then((res) => {
              if(!res.data.errMessage){
                if(!loginLoading && res.data.length === 0 ){
-                  axios.get("http://dreamweb.runflare.run/conversation/logout" ,{withCredentials:true});
-                  setConversation(null)
+                axios.get(`${Api}/conversation/logout`,{withCredentials:true});
+                setConversation(null)
                 
                  }
                  if(res.data.length > 0){
@@ -82,7 +82,7 @@ const liveChat = () => {
      };
      const getMessages = async () => {
          if(conversation){
-            await axios.get(`http://dreamweb.runflare.run/message/`,{withCredentials:true}).then(res => {
+            await axios.get(`${Api}/message/`,{withCredentials:true}).then(res => {
                 setAllMessages(res.data)
            })
          }
@@ -104,19 +104,21 @@ const liveChat = () => {
         getMessages()
     },[conversation]);
     
-        const startChat = async (emai ,usernam) => {
-    
+        const startChat = async (e) => {
+            e.preventDefault()
             setLoginLoading(true)
-            const post = {email:emai ,username:usernam}
-            const send = await axios.post("http://dreamweb.runflare.run/conversation/" , post ,{withCredentials:true})
-            if(send.data.errMessage){
+            const post = {email:email ,username:username}
+            await axios.post(`${Api}/conversation/` , post ,{withCredentials:true}).then(res => {
+            
+            if(res.data.errMessage){
                 setLoginLoading(false);  
-                alert(send.data.errMessage)
+                alert(res.data && res.data.errMessage)
              } 
-            if(!send.data.errMessage){
-            await getconversation()
-            await getMessages()
+            if(!res.data.errMessage){
+             getconversation()
+             getMessages()
             }
+        })
 
     }
     useEffect(async () => {
@@ -141,7 +143,7 @@ const liveChat = () => {
     }
     setMessage("")
         if(message.length > 0){
-            await axios.post(`http://dreamweb.runflare.run/message/`,post ,{withCredentials:true}).then(res => {
+            await axios.post(`${Api}/message/`,post ,{withCredentials:true}).then(res => {
                 setAllMessages([...allMessages ,res.data])
             })
         }
@@ -194,14 +196,14 @@ const liveChat = () => {
                 <b>لطفا نام و ایمیل خود را وارد کنید</b>
                 <input placeholder="نام" onChange={(e) => setUserName(e.target.value)} />
                 <input placeholder="ایمیل" onChange={(e) => setEmail(e.target.value)} />
-                <button disabled={loginLoading} onClick={() => startChat(email,username)}>شروع گفتگو{loginLoading && 
+                <button disabled={loginLoading} onClick={startChat}>شروع گفتگو{loginLoading && 
                 <div style={{width:"25px",height:"25px",position:"absolute",borderRight:"4px solid #355c7d"}} className='loading-spinner'></div>} </button>
             </form>}
             {!conversation && <form style={conversation ?{ display:"none" }: null} className="chat-signUp">
                 <b>لطفا نام و ایمیل خود را وارد کنید</b>
                 <input placeholder="نام" onChange={(e) => setUserName(e.target.value)} />
                 <input placeholder="ایمیل" onChange={(e) => setEmail(e.target.value)} />
-                <button disabled={loginLoading} onClick={() => startChat(email,username)}>شروع گفتگو{loginLoading && 
+                <button disabled={loginLoading} onClick={startChat}>شروع گفتگو{loginLoading && 
                 <div style={{width:"25px",height:"25px",position:"absolute",borderRight:"4px solid #355c7d"}} className='loading-spinner'></div>} </button>
             </form>}
 

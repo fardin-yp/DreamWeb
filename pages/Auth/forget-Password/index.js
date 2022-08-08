@@ -1,7 +1,8 @@
-import React, { useState ,useRef} from 'react';
+import React, { useState ,useRef ,useContext} from 'react';
 import axios from 'axios';
 import ReCAPTCHA from 'react-google-recaptcha'
 import Head from 'next/head';
+import context from '../../../helpers/context/authContext'
 
 
 export async function getStaticProps() {
@@ -24,7 +25,8 @@ const ForgetPassword = ({json}) => {
   const [seccsess ,setSeccess] = useState(false)
   const [error ,setError] = useState('')
   const [loading , setLoading] = useState(false);
-  const reRef = useRef('')
+  const reRef = useRef('');
+  const {Api} = useContext(context)
 
   async function forget(){
     try{
@@ -33,7 +35,7 @@ const ForgetPassword = ({json}) => {
       const captcha = await reRef.current.executeAsync();
       reRef.current.reset();
     const post = {email ,captcha}
-    await axios.post('http://dreamweb.runflare.run/authentication/resetemail' ,post ,{withCredentials:true}).then(res => {
+    await axios.post(`${Api}/authentication/resetemail` ,post ,{withCredentials:true}).then(res => {
        
      if(res.data.errMessage){
       setError(res.data)}

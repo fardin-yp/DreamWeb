@@ -1,16 +1,15 @@
 import Navbar from "../../../components/navbar/navbar";
 import Footer from "../../../components/footer/footer";
-import LiveChat from '../../../components/liveChat/liveChat';
 import {useState} from "react";
 import Head from "next/head";
 import { useRouter } from 'next/router'
 
 export async function getServerSideProps(context) {
     const con = context.params.page;
-    const res = await fetch(`http://dreamweb.runflare.run/allRoutes/articles?page=${con}`)
+    const res = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/articles?page=${con}`)
     const json = await res.json();
       
-  const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/articles');
+  const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/articles');
   const jsonSeo = await resSeo.json();
   
     return {
@@ -95,7 +94,7 @@ const index = ({json ,jsonSeo}) => {
     <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
     <meta property="og:locale" content="Fa_IR" /> 
   </Head>
-            <LiveChat />
+           
            <Navbar /> 
            <div className="article-search">
            <form onSubmit={searching}>

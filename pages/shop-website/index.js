@@ -1,15 +1,14 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from '../../components/footer/footer';
-import LiveChat from '../../components/liveChat/liveChat';
 import NoPost from '../../components/NoPost/NoPost';
 import Head from 'next/head';
 
 export async function getStaticProps() {
 
-  const loggedIn = await fetch("http://dreamweb.runflare.run/allRoutes/shop");
+  const loggedIn = await fetch("https://dreamwebbackend.herokuapp.com/allRoutes/shop");
   const logged = await loggedIn.json();
 
-  const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/shop');
+  const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/shop');
   const jsonSeo = await resSeo.json();
 
   return {
@@ -38,7 +37,6 @@ const index = ({posts ,jsonSeo}) => {
     <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
     <meta property="og:locale" content="Fa_IR" /> 
   </Head>
-          <LiveChat />
             <Navbar  />
             <div className="route">
               <h1>وبسایت های فروشگاهی</h1>

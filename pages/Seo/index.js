@@ -1,27 +1,30 @@
-import React from 'react';
+import React,{useState ,useEffect ,useContext} from 'react';
 import Navbar from '../../components/navbar/navbar';
 import Footer from '../../components/footer/footer';
-import LiveChat from '../../components/liveChat/liveChat';
 import Head from 'next/head';
+import context from "../../helpers/context/authContext";
 
-export async function getStaticProps() {
+export async function getStaticProps(context) {
 
-    const res = await fetch('http://dreamweb.runflare.run/allRoutes/articles')
+    const res = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/articles')
     const json = await res.json()
 
-    const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/seo')
+    const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/seo')
     const jsonSeo = await resSeo.json();
 
     return {
       props:{
         json,
-        jsonSeo
+        jsonSeo,
       },
       revalidate:1
     };
   
   }
-const index = ({json ,jsonSeo}) => {
+const index = ({json ,jsonSeo ,user}) => {
+
+    const [Auth ,setAuth] = useState(false);
+    const {find} = useContext(context);
 
     return (
     <div className="layout">
@@ -38,8 +41,17 @@ const index = ({json ,jsonSeo}) => {
                <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
                <meta property="og:locale" content="Fa_IR" /> 
              </Head>
-        <LiveChat />
         <Navbar />
+        {Auth && <div style={{zIndex:"1"}} onClick={() => setAuth(null)} id="backDrop">hello</div>}
+          {Auth && 
+            <div className="secc-comment" style={{zIndex:"151"}}>
+              <img src={'/uploads/warning.png'} alt="" />
+              <h1>لطفا برای خرید وبسایت وارد اکانت خود شوید !!</h1>
+          <div>
+               <a href="/Auth/Login" ><button style={{width:"120px",padding:"10px",margin:"5px",background:"#3f51b5"}}> ورود به اکانت</button></a> 
+               <a href="/Auth/SignUp"><button style={{width:"120px" ,padding:"10px",margin:"5px",background:"#4caf50"}}>ثبت نام</button></a> 
+            </div>
+          </div>}
             <div className="Seo">
              <div className="about-seo">
                  <div>
@@ -103,7 +115,7 @@ const index = ({json ,jsonSeo}) => {
                          return <p style={{opacity:"0.78",fontWeight:"600"}} key={res}>{res}</p>
                          })}
                         </div>  
-                         <a style={res.title === 'سرویس خدمات ویژه' ? {backgroundColor:"#4caf50"}:null} href={`Seo/order/${res._id}`}>سفارش</a>
+                         <a onClick={() => { if(!find.username){setAuth(true)}}} href={find.username ? `/Seo/order/${res._id}`:"#"} style={res.title === 'سرویس خدمات ویژه' ? {backgroundColor:"#4caf50"}:null} >سفارش</a>
                      </div>
                    </div>
                 })}

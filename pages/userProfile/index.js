@@ -1,11 +1,12 @@
-import React,{useState ,useEffect} from 'react'
+import React,{useState ,useEffect ,useContext} from 'react';
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar';
 import axios from 'axios';
+import context from '../../helpers/context/authContext';
 
 export async function getServerSideProps(context){
 
-const usersloggedIn = await fetch("http://dreamweb.runflare.run/authentication/find",{
+const usersloggedIn = await fetch("https://dreamwebbackend.herokuapp.com/authentication/find",{
     credentials: "include",
     headers:{
       cookie:context.req.cookies.token
@@ -44,11 +45,14 @@ const index = ({user}) => {
   const [number ,setNumber] = useState("");
   const [loading ,setLoading] = useState(false);
   const [error ,setError] = useState("");
+  const [select ,setSelect] = useState(null);
+  const [meliCode ,setMeliCode] = useState("")
+  const {Api} = useContext(context);
 
   const updateProfile = async (e) => {
     e.preventDefault()
     setLoading(true)
-     const post = {email:email?email:user.email ,username:username?username:user.username ,number:number?number:user.number}
+     const post = {email:email?email:user.email ,username:username?username:user.username  ,number:number?number:user.number ,meliCode:meliCode?meliCode:user.meliCode}
      if(change === "email" && !email){
       return setError("لطفا ایمیل خود را وارد کنید !")
      }
@@ -58,7 +62,7 @@ const index = ({user}) => {
     if(change === "username" && !username){
      return setError("لطفا نام خود را وارد کنید !")
     }
-     await axios.put(`http://dreamweb.runflare.run/authentication/editUser/${user.number[0]._id}/${change}`,post,{withCredentials:true}).then(res => {
+     await axios.put(`${Api}/authentication/editUser/${user.number[0]._id}/${change}`,post,{withCredentials:true}).then(res => {
        if(res.data.errMessage){
         setError(res.data.errMessage)
          setLoading(false)
@@ -70,15 +74,16 @@ const index = ({user}) => {
   }
 
   useEffect(() => {
-    setLoading(false)
-  },[error]);
+    setError("");
+    setEmail("");
+    setNumber("");
+    setNumber("");
+    setMeliCode("");
+  },[change]);
 
   useEffect(() => {
-    setError("")
-    setEmail("")
-    setNumber("")
-    setNumber("")
-  },[change])
+    setLoading(false)
+  },[error]);
 
     return (
       
@@ -101,7 +106,7 @@ const index = ({user}) => {
               <button disabled={loading} onClick={updateProfile}>تایید</button>
             </form>
             </div>}
-            {change === "username" && <div className="change-profile">
+        {change === "username" && <div className="change-profile">
          
          <h1>ویرایش نام کاربری  <img onClick={() => setChange('')} 
          style={{width:"20px",opacity:"0.7",position:"absolute" ,left:"-10px",top:"0px",cursor:"pointer"}} src="/images/cancel.png" alt="cancel"/>
@@ -119,6 +124,25 @@ const index = ({user}) => {
            <button disabled={loading} onClick={updateProfile}>تایید</button>
          </form>
          </div>}
+
+        {change === "meliCode" && <div className="change-profile">         
+         <h1>ویرایش  کدملی  <img onClick={() => setChange('')} 
+         style={{width:"20px",opacity:"0.7",position:"absolute" ,left:"-10px",top:"0px",cursor:"pointer"}} src="/images/cancel.png" alt="cancel"/>
+         </h1>
+         <form>
+           <div style={{width:"70%"}}>
+             <p> کدملی قبلی :</p>
+           <input style={{direction:"rtl"}} value={user.number[0]?.meliCode} />
+           </div>
+           <div style={{width:"70%"}}>
+             <p>کدملی جدید :</p>
+           <input style={error ? {border:"1px solid red",direction:"rtl"}:{direction:"rtl"}} onChange={(e) => setMeliCode(e.target.value) } />
+           </div>
+           {error && <p style={{color:"red" ,fontSize:"12px",marginBottom:"-15px",marginTop:"-5px"}}>{error}</p>}
+           <button disabled={loading} onClick={updateProfile}>تایید</button>
+         </form>
+         </div>}
+
          {change === "number" && <div className="change-profile">
          
          <h1>ویرایش  تلفن همراه  <img onClick={() => setChange('')} 
@@ -151,6 +175,7 @@ const index = ({user}) => {
                                 <a onClick={() => setChange("email")} href="#"> ایمیل </a>
                                 <a onClick={() => setChange("username")} href="#"> نام کاربری</a>
                                 <a onClick={() => setChange("number")} href="#"> شماره همراه </a>
+                                <a onClick={() => setChange("meliCode")} href="#"> کدملی </a>
                                 <a href="/Auth/forget-Password"> رمز عبور </a>
                             </label>
                             </div>
@@ -170,11 +195,32 @@ const index = ({user}) => {
                  <input value={user.number[0]?user.number[0].number:null} />
                  </div>
                  <div>
-                    <p style={{fontSize:"14px" ,fontWeight:"600"}}>رمز عبور:</p>
-                 <input value={"***************"} />
+                    <p style={{fontSize:"14px" ,fontWeight:"600"}}>کد ملی:</p>
+                 <input value={user.number[0]?user.number[0].meliCode:null} />
                  </div>
                 </div>
                    
+                 </div>
+                 <div className="user-purchases">
+                    <label>
+                      <p>لیست خرید ها </p>
+                      <img src="/images/purchase.png" />
+                    </label>
+                    <div className="purchase-list">
+                      {user && user.purchases.map(res => {
+                         return <div onClick={() => setSelect(res)}>
+                           <p>{ res.product.post?.name || res.product.json?.title || res?.description}</p>
+                           {!res.confirmation && 
+                           <p style={{fontSize:"11px" ,opacity:"0.6"}}>
+                             در انتظار تایید ..
+                          </p>}
+                          {res.confirmation === true && 
+                           <p style={{fontSize:"11px" ,opacity:"0.6" ,color:"green"}}>
+                             تایید شد !
+                          </p>}
+                         </div>
+                      })}
+                    </div>
                  </div>
 
              </div>

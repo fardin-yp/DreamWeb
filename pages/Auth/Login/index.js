@@ -4,6 +4,7 @@ import AuthContext from "../../../helpers/context/authContext";
 import { useRouter } from 'next/router';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Head from 'next/head';
+import Image from 'next/image';
 
 
 export async function getServerSideProps(context) {
@@ -20,7 +21,7 @@ export async function getServerSideProps(context) {
     }
   }
 
-  const usersloggedIn = await fetch("http://dreamweb.runflare.run/authentication/find",{
+  const usersloggedIn = await fetch("https://dreamwebbackend.herokuapp.com/authentication/find",{
     credentials: "include",
     headers:{
       cookie:context.req.cookies.token
@@ -52,7 +53,7 @@ const index = ({json}) => {
     const [email ,setEmail] = useState('');
     const [password ,setPassword] = useState('');
     const [loading , setLoading] = useState(false);
-    const {getUserLoggedIn} = useContext(AuthContext);
+    const {getUserLoggedIn ,Api} = useContext(AuthContext);
     const [error ,setError] = useState('');
     const [seePassword ,setSeePassword] = useState(false);
     const router = useRouter();
@@ -68,7 +69,7 @@ const login = async (e) => {
      const post  = {email ,password ,captcha};
      const Apost = {email ,password}
      try{
-        await axios.post('http://dreamweb.runflare.run/authentication/login' , post ,{withCredentials:true}).then(res => {
+        await axios.post(`/api/Auth/login` , post ,{withCredentials:true}).then(res => {
           if(res.data.errMessage){
             setError(res.data.errMessage)
             setLoading(false);
@@ -82,12 +83,13 @@ const login = async (e) => {
                 window.location = '/'
               }  
             }
+
         }) 
       }catch(err){
         setLoading(false)   
       }
       try{
-        await axios.post('http://dreamweb.runflare.run/auth/login' , Apost ,{withCredentials:true}).then(res => {
+        await axios.post(`/api/Auth/Admin/Login` , Apost ,{withCredentials:true}).then(res => {
           if(!res.data.errMessage){
             window.location = '/Admin'
           }
@@ -102,28 +104,36 @@ const login = async (e) => {
     return (
         <div className="login">
  <Head>
-   <link rel="icon" href="/art.png" />
     <title> ورود اکانت کاربری</title>
   </Head>
-            <form >
-                <h1 style={{background:"linear-gradient(90deg, #48c6ef 0%, #6f86d6 100%)"}}>ورود به پنل کاربری</h1>
-                <input onChange={(e) => setEmail(e.target.value)} placeholder="ایمیل" />
-                <div id="password">
-                <input type={seePassword ? "text" : "password"} onChange={(e) => setPassword(e.target.value)} placeholder="رمز عبور " /> 
+  <form >
+               <div className="left-login">
+                 <img src="/images/login-1.png" alt="login" />
+               </div>
+               <div className="right-login">
+               <div className="sign-logo" ><a href="/" target="_blank">
+                 <Image layout={"fill"} src={"/images/dreamWeb.png"} alt="دریم وب" /></a></div>
+               <b>  ورود به پروفایل کاربری دریم وب</b>
+               <p>شما میتوانید برای استفاده از دیگر خدمات و خدمات پرداخت دریم وب وارد حساب کاربری خود شوید . درصورت نداشتن حساب کاربری <a style={{color:"#2196f3"}} href="/Auth/SignUp">ثبت نام</a> کنید !</p>
+               <p>
+
+               </p>
+
+                <input onChange={(e) => setEmail(e.target.value)} placeholder="ایمیل " />
+                <div style={{width:"90%"}} id="password">
                 <img style={seePassword ? {opacity:"1"}:null} src={'/uploads/view.png'} onClick={() => setSeePassword(prev => !prev)} />
+                <input type={seePassword ? "text" : "password"} onChange={(e) => setPassword(e.target.value)} placeholder="رمز عبور" /> 
                 </div>
+              
                 <ReCAPTCHA 
                  style={{zIndex:"30",opacity:"0"}}
                  size="invisible"
                  sitekey={json}
                  ref={reRef}
                  />
-                <button onClick={login} style={{background:"linear-gradient(90deg, #48c6ef 0%, #6f86d6 100%)"}}> ورود {loading && <div className='loading-spinner'></div>}</button>
-                <div style={{width:"72%"}} className="Auth-err">{error && <label><img style={{width:"20px" ,height:"20px"}} src="/images/warning (1).png" alt="warning" /> <p>{error}</p></label>}</div>
-                <div style={{flexFlow:"column",alignItems:"flex-start",width:"70%"}}>
-                  <p> ثبت نام نکرده اید؟<a style={{color:"cadetblue",pointerEvents:"all"}} href="/Auth/SignUp"> ثبت نام</a> 
-                  </p><p> رمز عبور خود را فراموش کرده اید؟<a href="/Auth/forget-Password" style={{pointerEvents:"all",color:"cadetblue"}}> فراموشی رمز عبور</a></p>
-                </div>
+                <button style={{background:"#2196f3"}} disabled={loading} onClick={login}>ورود به پنل</button>
+                <div className="Auth-err">{error && <p>{error}</p>}</div>
+               </div>
             </form>
         </div>
     )

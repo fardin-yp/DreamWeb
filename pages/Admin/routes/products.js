@@ -1,6 +1,7 @@
-import React,{useState ,useEffect,useRef} from 'react';
+import React,{useState ,useEffect, useContext} from 'react';
 import axios from 'axios';
-import CKEditor from '../editor/Editor'
+import CKEditor from '../editor/Editor';
+import context from '../../../helpers/context/authContext';
 
  const Products = () => {
     const [name ,setName] = useState('');
@@ -12,6 +13,7 @@ import CKEditor from '../editor/Editor'
     const [link ,setLink] = useState("");
     const [property ,setProperty] = useState('');
     const [loading ,setLoading] = useState(false);
+    const {Api} = useContext(context)
 
    const postHandler = async (e) =>{    
         e.preventDefault();
@@ -28,7 +30,7 @@ import CKEditor from '../editor/Editor'
         formData.append("link" , link);
         formData.append("Property" , property);
         
-        await axios.post('http://dreamweb.runflare.run/adminRoute/product', formData ,{withCredentials:true}).then(res => {
+        await axios.post(`${Api}/adminRoute/product`, formData ,{withCredentials:true}).then(res => {
             if(res.data.errMessage){
                 alert(res.data.errMessage);
                 setErr(res.data.errMessage);

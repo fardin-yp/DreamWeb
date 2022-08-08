@@ -1,13 +1,13 @@
 import Navbar from "../navbar/navbar";
 import Footer from "../footer/footer";
 import Image from 'next/image'
-import { useState ,useRef, useEffect } from "react";
-import LiveChat from "../liveChat/liveChat";
+import { useState ,useRef, useEffect ,useContext} from "react";
 import axios from "axios";
 import ReCAPTCHA from 'react-google-recaptcha';
+import context from "../../helpers/context/authContext"
 
 
-const Home = ({json ,articles ,Questions ,links}) => {
+const Home = ({json ,articles ,Questions ,links }) => {
  
     const [questions ,SetQuestions] = useState('');
     const [name , setName] = useState("");
@@ -15,6 +15,7 @@ const Home = ({json ,articles ,Questions ,links}) => {
     const [errMessage ,setErrMessage] = useState("");
     const [loading ,setLoading ]= useState(false);
     const reRef = useRef('');
+    const {Api} = useContext(context)
 
     const sendConsulting = async (e) => {
         e.preventDefault();
@@ -23,7 +24,7 @@ const Home = ({json ,articles ,Questions ,links}) => {
         reRef.current.reset()
 
     const post = {number ,name ,captcha}
-    await axios.post('http://dreamweb.runflare.run/allRoutes/consulting' ,post).then(res => {
+    await axios.post(`${Api}/allRoutes/consulting` ,post).then(res => {
     if(res.data.errMessage){
     setErrMessage(res.data.errMessage)
     setLoading(false)
@@ -265,7 +266,7 @@ const Home = ({json ,articles ,Questions ,links}) => {
             </div>
 
             </div>
-            <Footer />
+            <Footer  />
         </div>
         </>
     )

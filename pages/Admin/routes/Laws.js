@@ -1,6 +1,7 @@
-import React,{useEffect, useState} from 'react';
+import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import Edit from '../editor/edit'
+import Edit from '../editor/edit';
+import context from '../../../helpers/context/authContext';
 
 
 const Users = ({info}) => {
@@ -8,6 +9,7 @@ const Users = ({info}) => {
     const [text ,setText] = useState(false);
     const [loading ,setLoading] = useState(false);
     const [id ,setId ] = useState(null);
+    const {Api} = useContext(context)
 
     useEffect(() => {
         if(info){
@@ -20,7 +22,7 @@ const Users = ({info}) => {
         setLoading(true);
         const post = {id ,text}
         try{
-            await axios.post(`http://dreamweb.runflare.run/adminRoute/laws/`,post ,{withCredentials:true}).then(res => {
+            await axios.post(`${Api}/adminRoute/laws/`,post ,{withCredentials:true}).then(res => {
                 if(res.data.errMessage){
                     alert(res.data.errMessage)
                 }

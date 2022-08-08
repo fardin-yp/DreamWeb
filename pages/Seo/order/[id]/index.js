@@ -1,13 +1,14 @@
-import {useState ,useEffect} from 'react';
+import {useState ,useEffect ,useContext} from 'react';
 import axios from 'axios';
+import context from '../../../../helpers/context/authContext';
 
 export async function getServerSideProps(context) {
 
     const id = context.params.id;
-    const res = await fetch(`http://dreamweb.runflare.run/allRoutes/SeoService/${id}`)
+    const res = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/SeoService/${id}`)
     const json = await res.json();
-
-    const usersloggedIn = await fetch("http://dreamweb.runflare.run/authentication/find",{
+    const merchant = "d164f627-0400-4dc5-8da5-bc166ee30553";
+    const usersloggedIn = await fetch("https://dreamwebbackend.herokuapp.com/authentication/find",{
         credentials: "include",
         headers:{
           cookie:context.req.cookies.token
@@ -40,63 +41,64 @@ export async function getServerSideProps(context) {
 
   
     return {
-       props: {json ,user}
+       props: {json ,user ,merchant}
     }
   }
 
-const index = ({json ,user}) => {
+const index = ({json ,user ,merchant}) => {
 
 
-    const [namee, setName] = useState("");
-    const [email ,setEmail] = useState("");
-    const [number , setNumber] = useState('');
-    const [des, setDes] = useState("");
-    const [PAy ,seTpay] = useState(false);
     const [read ,setRead ] = useState(false);
     const [laws ,setLaws] = useState("");
+    const [description ,setDescription] = useState("");
+    const [ rialsPay ,setrialsPay] = useState("");
+    const [err ,setErr] = useState(null);
+    const {Api} = useContext(context);
     
-
-    const pay = async (e) => {
-        e.preventDefault();
-        const post = {namee ,email ,number ,des ,information:name ,price}
-      await axios.post("http://dreamweb.runflare.run/allRoutes/orderSold" ,post ,{withCredentials:true})
-    }
     const law = async () => {
-        await axios.get("http://dreamweb.runflare.run/allRoutes/laws",{withCredentials:true}).then(res => {
+        await axios.get("https://dreamwebbackend.herokuapp.com/allRoutes/laws",{withCredentials:true}).then(res => {
           setLaws(res.data[0].text)
         })
        }
     useEffect(() => {
         if(user) {
-          setName(user.username);
-          setEmail(user.email);
-          setNumber(user.number[0].number);
           law()
+          setrialsPay(json && json.payPrice + "0")
         }
       },[])
+
+      const paying = async (e) => {
+        e.preventDefault();
+        
+       const Post = {object:{json},email:user.email,category:"seo", des:description ,amount:parseInt(rialsPay) , description:json.title ,callback_url:`http://localhost:3000/order/buyComplete/${rialsPay}/`,merchant_id:merchant}
+        await axios.post(`${Api}/sell/pay` ,Post ,{withCredentials:true})
+        .then(res => {
+         if(res.data.errMessage){
+           setErr(res.data)
+         }
+         if(!res.data.errMessage){
+           localStorage.setItem("object" ,JSON.stringify(res.data))
+           window.location = `https://www.zarinpal.com/pg/StartPay/${res.data.post.data.authority}`
+         }
+ 
+       })
+     }
+
     return (
         <div className="order-web">
-            {PAy === true && <div onClick={() => seTpay(false)} id="backDrop">hello</div>}
             {read === true && <div onClick={() => setRead(false)} id="backDrop">hello</div>}
             {read === true &&             
             <div className="law">
               <img onClick={() => setRead(false)} src="/images/cancel (1).png" alt=""/>
 {laws && <div dangerouslySetInnerHTML={{__html: laws}} />}
             </div>}
-            {PAy === true &&
-            <div className="secc-comment">
-                <img src={'/uploads/warning.png'} alt="" />
-                <h1 style={{marginTop:"15px",color:"#fe0000"}}> متاسفانه در حال حاضر درگاه پرداختی وجود ندارد !</h1>
-                <h2 style={{textAlign:"center",fontSize:"20px"}}>شما میتوانید برای خرید این وبسایت با پشتیبانی تماس بگیرید!</h2>
-                <button style={{background:"#fe1919"}} onClick={() => {
-                    seTpay(false)}}>متوجه شدم</button>
-            </div>}
+
             <h1> سفارش آنلاین {json.title}</h1>
-            <form >
-                <input value={namee} style={{background:"#ddf0ff"}} onChange={(e) => setName(e.target.value)} placeholder="نام و نام خانوادگی" />
-                <input value={number} style={{background:"#ddf0ff"}} onChange={(e) => setNumber(e.target.value)} placeholder="شماره همراه" />
-                <input value={json._id}  style={{background:"#ddf0ff"}} placeholder={`کد سرویس: ${json._id}`} />   
-                <input value={email} style={{background:"#ddf0ff"}} onChange={(e) => setEmail(e.target.value)} placeholder="ایمیل" />   
+            <form>
+            <input style={{background:"#ddf0ff"}}  placeholder={`نام و نام خانوادگی: `} value={`نام و نام خانوادگی: ${user.username} ${user.number[0].family}`} onChange={(e) => setUserName(e.target.value)} />
+                <input style={{background:"#ddf0ff"}} placeholder="شماره همراه" value={`شماره همراه: ${user.number[0].number}`} />
+                <input style={{background:"#ddf0ff"}} placeholder={`کد ملی: `} value={`کد ملی: ${user.number[0].meliCode}`} />
+                <input style={{background:"#ddf0ff"}} placeholder="ایمیل" value={`ایمیل: ${user.email}`} />  
              <textarea onChange={(e) => setDescription(e.target.value)} style={{fontWeight:"600",width:"92%",marginTop:"15px" ,borderRadius:"5px",border:"1px solid silver",height:"100px"}} placeholder="توضیحات بیشتر ... (دلخواه)" />        
              <label>
                 <div style={{width:"99%",margin:"10px 0px"}}>
@@ -108,10 +110,10 @@ const index = ({json ,user}) => {
                     <p>مبلغ قابل پرداخت:</p>
                     <p>{json.price}</p>
                 </div>
-                <a href="#" onClick={() => seTpay(true)}>پرداخت آنلاین</a>
+                <a href="#" onClick={paying}>پرداخت آنلاین</a>
             </form>
         </div>
     )
 }
 
-export default index
+export default index;

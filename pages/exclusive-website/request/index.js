@@ -13,7 +13,7 @@ export async function getServerSideProps(context) {
 
   const json = "6LfMd88dAAAAANh6pGI5JNg-q4m3gkwi8BlYKmHo" ;
     
-    const usersloggedIn = await fetch("http://dreamweb.runflare.run/authentication/find",{
+    const usersloggedIn = await fetch("https://dreamwebbackend.herokuapp.com/authentication/find",{
         credentials: "include",
         headers:{
           cookie:context.req.cookies.token
@@ -32,7 +32,7 @@ export async function getServerSideProps(context) {
 
 const index = ({json ,user}) => {
 
-    const {find} = useContext(AuthContext)
+    const {find ,Api} = useContext(AuthContext)
     const [email ,setEmail] = useState('');
     const [number ,setNumber] = useState('');
     const [name ,setName] = useState('');
@@ -49,7 +49,7 @@ const index = ({json ,user}) => {
         reRef.current.reset()
         const ex = {email ,number ,name ,des, captcha};
       try{
-      await axios.post('http://dreamweb.runflare.run/allRoutes/exclusive' , ex).then(res => {
+      await axios.post(`${Api}/allRoutes/exclusive` , ex).then(res => {
         if(res.data.errMessage){
             setErr(res.data)
             setLoading(false)

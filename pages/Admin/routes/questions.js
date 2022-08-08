@@ -1,7 +1,8 @@
-import {useState ,useEffect} from 'react';
+import {useState ,useEffect, useContext} from 'react';
 import axios from 'axios';
 import Edit from '../editor/edit';
-import CKEditor from '../editor/Editor'
+import CKEditor from '../editor/Editor';
+import context from '../../../helpers/context/authContext';
 
 const Question = () => {
 
@@ -11,7 +12,8 @@ const Question = () => {
     const [route , setRoute ] = useState('');
     const [questions ,setQuestions] = useState(null);
     const [edit ,setEdit] = useState(null);
-    const [id ,setId] = useState(null) 
+    const [id ,setId] = useState(null) ;
+    const {Api} = useContext(context)
   
 
    const postHandler = async (e) =>{    
@@ -19,7 +21,7 @@ const Question = () => {
    const post = {question ,answer ,route};
    setLoading(true)
     try{      
-        await axios.post("http://dreamweb.runflare.run/adminRoute/questions" , post ,{withCredentials:true} ).then(res => {
+        await axios.post(`${Api}/adminRoute/questions` , post ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data.errMessage);
                 setLoading(false)
@@ -34,7 +36,7 @@ const Question = () => {
 const getQuestions = async () =>{    
 
      try{      
-         await axios.get("http://dreamweb.runflare.run/allRoutes/articles").then(res => {
+         await axios.get(`${Api}/allRoutes/articles`).then(res => {
            setQuestions(res.data.findQuestions)
          } )
      }catch(err){
@@ -50,7 +52,7 @@ const getQuestions = async () =>{
     setLoading(true)
     try{ 
  const post = {question ,answer ,route ,id:edit._id}
-    axios.put("http://dreamweb.runflare.run/adminRoute/updateQuestions" , post ,{withCredentials:true} ).then(res => {
+    axios.put(`${Api}/adminRoute/updateQuestions` , post ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data,errMessage);
                 setLoading(false);
@@ -69,7 +71,7 @@ const deleteQuestions = async (e) => {
     setLoading(true)
     try{ 
  const post = {id:id}
-    axios.post("http://dreamweb.runflare.run/adminRoute/deleteQuestions" , post ,{withCredentials:true} ).then(res => {
+    axios.post(`${Api}/adminRoute/deleteQuestions` , post ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data,errMessage);
                 setLoading(false);
@@ -85,7 +87,7 @@ const deleteQuestions = async (e) => {
 
     return (
         <div className="products" style={{flexFlow:"column",alignItems:"center"}}>
-            {edit && <div style={{zIndex:"1"}} onClick={() => setEdit(false)} id="backDrop">hello</div>}
+            {edit && <div  onClick={() => setEdit(false)} id="backDrop">hello</div>}
             {id && <div onClick={() => setId(null)} id="backDrop">hello</div>}
             {id &&
             <div className="secc-comment">
@@ -109,7 +111,7 @@ const deleteQuestions = async (e) => {
                 </button>
             </form>
             {questions && questions.map((res ,idx) => {
-                return <form style={{position:"relative" ,cursor:"pointer"}}>
+                return <form style={{position:"relative" ,marginTop:"15px",cursor:"pointer"}}>
                     <b style={{padding:"10px" ,borderRadius:"50%" ,position:"absolute",right:"10px",background:"cyan",display:"flex",alignItems:"center",color:"white",justifyContent:"center",width:"30px",height:"30px"}}>{idx + 1}</b>
                     <input style={{width:"80%"}} value={res.question} />
                     <button onClick={(e) => {

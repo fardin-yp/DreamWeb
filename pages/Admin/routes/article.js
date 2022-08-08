@@ -1,6 +1,7 @@
-import {useState ,useEffect} from 'react';
+import {useState ,useEffect, useContext} from 'react';
 import axios from 'axios';
-import CKEditor from '../editor/Editor'
+import CKEditor from '../editor/Editor';
+import context from '../../../helpers/context/authContext';
 
 
 const Articles = () => {
@@ -8,6 +9,7 @@ const Articles = () => {
     const [image ,setImage] = useState('');
     const [info ,setInfo] = useState('');
     const [loading ,setLoading] = useState(false);
+    const {Api} = useContext(context)
 
    const postHandler = async (e) =>{    
         e.preventDefault();
@@ -20,7 +22,7 @@ const Articles = () => {
         formData.append("info" ,info);
 
         
-        await axios.post("http://dreamweb.runflare.run/adminRoute/article" , formData ,{withCredentials:true} ).then(res => {
+        await axios.post(`${Api}/adminRoute/article` , formData ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data.errMessage)
                 setErr(res.data.errMessage)

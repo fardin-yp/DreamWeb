@@ -1,5 +1,6 @@
-import {useState ,useEffect} from 'react';
+import {useState ,useEffect, useContext} from 'react';
 import axios from 'axios';
+import context from '../../../helpers/context/authContext'
 
 const Exclusive = () => {
 
@@ -8,8 +9,6 @@ const Exclusive = () => {
     const [price ,setPrice] = useState("");
     const [type ,setType] = useState("");
     const [des ,setDes] = useState("");
-    const [err ,setErr] = useState('');
-    const [arr ,setArr] = useState([]);
     const [loading ,setLoading] = useState(false);
     const [edit ,setEdit] = useState(false);
     const [newtitle ,setNewTitle] = useState("");
@@ -20,26 +19,34 @@ const Exclusive = () => {
     const [categorySecond ,setCategorySecond] = useState('');
     const [categoryThird ,setCategoryThird] = useState('');
     const [required ,setRequired] = useState(false);
+    const {Api} = useContext(context)
 
 
    const postHandler = async (e) =>{    
    e.preventDefault();
    setLoading(true);
     try{      
-        await axios.put("http://dreamweb.runflare.run/adminRoute/exclusiveForm" , newform ,{withCredentials:true} ).then(res => {
+        await axios.put(`${Api}/adminRoute/exclusiveForm` , newform ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data,errMessage);
                 setLoading(false);
             }
             alert(res.data.Message);
             setLoading(false);
+            setTitle("")
+            setType("")
+            setPrice("")
+            setDes("")
+            setCategoryFirst("")
+            setCategorySecond("")
+            setCategoryThird("")
         } )
     }catch(err){
   }    
 }
 const GetForm = async () =>{    
      try{      
-         await axios.get("http://dreamweb.runflare.run/adminRoute/exclusiveForm" ,{withCredentials:true} ).then(res => {
+         await axios.get(`${Api}/adminRoute/exclusiveForm` ,{withCredentials:true} ).then(res => {
             setForm(res.data[0].form)
          })
      }catch(err){
@@ -51,7 +58,7 @@ useEffect(() => {
 
 const addForm = (e) => {
     e.preventDefault()
-    const obj = {title , type ,price ,des ,categoryFirst ,categorySecond ,categoryThird ,required}
+    const obj = {title , type ,price ,des ,categoryFirst ,categorySecond ,categoryThird ,required:JSON.parse(required)}
     setForm([...newform , obj]);
     alert("فرم افزوده شد!")
 }
@@ -59,11 +66,11 @@ const update = async (e) => {
     e.preventDefault()
     try{ 
     let newArr = [...newform]; 
-    newArr[edit.id] = {title:newtitle ,required:required ,des:newdes,price:newprice ,type:newtype ,categoryFirst:categoryFirst ,categorySecond:categorySecond ,categoryThird:categoryThird} 
+    newArr[edit.id] = {title:newtitle ,required:JSON.parse(required),des:newdes,price:newprice ,type:newtype ,categoryFirst:categoryFirst ,categorySecond:categorySecond ,categoryThird:categoryThird} 
     setForm(newArr);
     setLoading(true);
          
-    axios.put("http://dreamweb.runflare.run/adminRoute/exclusiveForm" , newArr ,{withCredentials:true} ).then(res => {
+    axios.put(`${Api}/adminRoute/exclusiveForm` , newArr ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data,errMessage);
                 setLoading(false);
@@ -75,6 +82,7 @@ const update = async (e) => {
   }  
     
 }
+console.log(JSON.parse(required))
 
     return (
         <>
@@ -102,7 +110,7 @@ const update = async (e) => {
                     <option value="company"> شرکتی</option>
                     <option value="base">پایه</option>
                 </select>
-                <select onChange={(e) => setCategoryThird(e.target.value)}>
+                <select onChange={(e) => setRequired(e.target.value)}>
                     <option value={false}> الزام انتخاب</option>
                     <option value={false}>false</option>
                     <option value={true}>true</option>
@@ -173,7 +181,7 @@ const update = async (e) => {
                               <a href="#">نوع</a>
                           </th>
                           <th style={{width:"15%"}}>
-                              <a href="#">قیمت (ریال)</a>
+                              <a href="#">قیمت (تومان)</a>
                           </th>
                       </thead>
 

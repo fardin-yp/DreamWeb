@@ -1,11 +1,12 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import context from "../../../helpers/context/authContext"
 
 export async function getServerSideProps(context) {
 
-    const loggedIn = await fetch("http://dreamweb.runflare.run/authentication/reset/"+ context.params.reset,{
+    const loggedIn = await fetch("https://dreamwebbackend.herokuapp.com/authentication/reset/"+ context.params.reset,{
       method:'GET',
       credentials: 'include',
     });
@@ -38,13 +39,14 @@ const ResetPassword = ({logged}) => {
     const [error ,setError] = useState('')
     const [loading , setLoading] = useState(false);
     const Router = useRouter()
+    const {Api} = useContext(context)
 
     async function reset(e){
       e.preventDefault()
       setError('')
       const post = {password ,token:Router.query.reset,verify}
       try{
-      await axios.post('http://dreamweb.runflare.run/authentication/reset' ,post).then(res => {
+      await axios.post(`${Api}/authentication/reset` ,post).then(res => {
     
      if(res.data.errMessage){
       setError(res.data.errMessage)

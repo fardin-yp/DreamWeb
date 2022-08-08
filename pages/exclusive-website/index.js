@@ -2,7 +2,6 @@ import Footer from '../../components/footer/footer';
 import Navbar from '../../components/navbar/navbar';
 import Image from 'next/image';
 import {useState} from 'react';
-import LiveChat from '../../components/liveChat/liveChat';
 import Head from 'next/head';
 import { useAmp } from 'next/amp';
 import webDes from "./website-design-animation-1.gif";
@@ -12,10 +11,10 @@ import fast from "./fast.gif";
 
 export async function getStaticProps() {
 
-    const res = await fetch('http://dreamweb.runflare.run/allRoutes/exclusive')
+    const res = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/exclusive')
     const json = await res.json();
 
-    const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/seo/exclusive')
+    const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/seo/exclusive')
     const jsonSeo = await resSeo.json();
   
     return {
@@ -31,7 +30,8 @@ export async function getStaticProps() {
 const index = ({json ,jsonSeo}) => {
 
     const [questions ,SetQuestions] = useState(1);
-    const isAmp = useAmp()
+    const isAmp = useAmp();
+
     return (
     <div>
 <Head>
@@ -47,9 +47,9 @@ const index = ({json ,jsonSeo}) => {
     <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
     <meta property="og:locale" content="Fa_IR" /> 
 </Head>
-    <LiveChat />
         <Navbar />
            <div className="exclusive">
+ 
              <div className="ex">
              <div className="ex-info">
                 <h1>سایت اختصاصی</h1>
@@ -144,9 +144,8 @@ const index = ({json ,jsonSeo}) => {
                                <h1>{res.question}</h1>
                                     <div><p style={questions !== res._id  ?{display:"none"} :null}>{res.answer}</p></div>
                                </div>
-                           })}
-
-                       </div>
+                        })}
+                </div>
             </div>}
            </div>
         <Footer />

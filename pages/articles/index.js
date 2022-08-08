@@ -1,6 +1,5 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../components/footer/footer";
-import LiveChat from '../../components/liveChat/liveChat';
 import { useState } from "react";
 import { useRouter } from 'next/router'
 import Head from 'next/head';
@@ -8,10 +7,10 @@ import Head from 'next/head';
 export async function getStaticProps() {
 
 
-  const loggedIn = await fetch("http://dreamweb.runflare.run/allRoutes/articles",{method:'GET'});
+  const loggedIn = await fetch("https://dreamwebbackend.herokuapp.com/allRoutes/articles",{method:'GET'});
   const logged = await loggedIn.json();
   
-  const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/articles');
+  const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/articles');
   const jsonSeo = await resSeo.json();
 
 
@@ -99,7 +98,7 @@ const index = ({json ,jsonSeo }) => {
     <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
     <meta property="og:locale" content="Fa_IR" /> 
   </Head>
-        <LiveChat />
+        
         <Navbar /> 
            <div className="article-search">
            <form onSubmit={searching}>
@@ -114,8 +113,8 @@ const index = ({json ,jsonSeo }) => {
                     <label>
                     <h1>{res.title}</h1>
                     <div>
-                      <div><img src={"/uploads/conversation.png"} />دیدگاه:{res.comments.length}</div>
-                      <div><img src={"/uploads/calendar.png"} />{res.timestamp}</div>
+                      <div><img src={"/uploads/conversation.png"} style={{margin:"5px"}} />دیدگاه:{res.comments.length}</div>
+                      <div><img src={"/uploads/calendar.png"} style={{margin:"5px"}} />{res.timestamp}</div>
                     </div>
                     </label>
                 </a>

@@ -1,27 +1,22 @@
 import Navbar from '../../../components/navbar/navbar';
 import Footer from '../../../components/footer/footer';
-import Image from 'next/image';
 import Head from 'next/head';
-import LiveChat from '../../../components/liveChat/liveChat';
 import Comment from '../../articles/comment';
 import {useRouter} from "next/router"
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import Share from '../../../helpers/share/Share';
+import axios from 'axios';
+import context from '../../../helpers/context/authContext';
 
 export async function getServerSideProps(context) {
 
   const con = context.params.items;
   const reCaptcha = "6LfMd88dAAAAANh6pGI5JNg-q4m3gkwi8BlYKmHo" ;
-  const findPost = await fetch(`http://dreamweb.runflare.run/allRoutes/fullPost/${con}`,{method:'GET'});
+  const findPost = await fetch(`http://localhost:3000/api/fullPost/${con}`,{method:'GET'});
   const json = await findPost.json();
 
-    const usersloggedIn = await fetch("http://dreamweb.runflare.run/authentication/loggedIn",{
-      credentials: "include",
-      headers:{
-        cookie:context.req.cookies.token
-      }
-      
-    });
-    const loggedIn = await fetch("http://dreamweb.runflare.run/auth/loggedIn",{
+    const usersloggedIn = await axios.get("http://localhost:3000/api/Auth/login",{withCredentials:true});
+    const loggedIn = await fetch("http://localhost:3000/api/Auth/Admin/Login",{
       credentials: "include",
       headers:{
         cookie:context.req.cookies.Admin
@@ -29,7 +24,6 @@ export async function getServerSideProps(context) {
       
     });
     const admin = await loggedIn.json();
-    const user = await usersloggedIn.json();  
 
 
   if(!json.name){
@@ -42,14 +36,15 @@ export async function getServerSideProps(context) {
   }
 
   return {
-     props: {post:json ,user ,admin ,reCaptcha}
+     props: {post:json ,user:usersloggedIn.data ,admin ,reCaptcha }
   }
 }
 
-const index = ({post ,user ,admin ,reCaptcha}) => {
+const index = ({post ,user ,admin ,reCaptcha }) => {
 
 const [property ,setProperty] = useState(null);
-const [Auth ,setAuth] = useState(false)
+const [Auth ,setAuth] = useState(false);
+const {userLoggedIn} = useContext(context)
 
    const func = async () => {
     const pro = post.Property && post.Property
@@ -58,7 +53,9 @@ const [Auth ,setAuth] = useState(false)
    useEffect(() => {
     func()
    },[])
-   const router = useRouter()
+
+   const router = useRouter();
+
     return (
         <div className="layout">
             <Head>
@@ -84,8 +81,6 @@ const [Auth ,setAuth] = useState(false)
                <a href="/Auth/SignUp"><button style={{width:"120px" ,padding:"10px",margin:"5px",background:"#4caf50"}}>ثبت نام</button></a> 
             </div>
             </div>}
-
-          <LiveChat />
           <Navbar />
            <div className="fullpost">
          
@@ -95,8 +90,8 @@ const [Auth ,setAuth] = useState(false)
                 <h1>{post.name}</h1>
                 <p>{post.description}</p>
                 <div>
-                  <a onClick={() => { if(user !== true){setAuth(true)}}} href={user ? `/order/${post._id}`:"#"}>خرید وبسایت</a>
-                  <a href={post.link} style={{backgroundColor:"coral"}}>دمو وبسایت</a>
+                  <a onClick={() => { if(userLoggedIn !== true){setAuth(true)}}} href={userLoggedIn ? `/order/${post._id}`:"#"}>خرید وبسایت</a>
+                  <a href={post.link}>دمو وبسایت</a>
                   </div>
                 </div>
               </div>
@@ -125,6 +120,9 @@ const [Auth ,setAuth] = useState(false)
                 {property && <div dangerouslySetInnerHTML={{__html: property}} />}
                 
               </div>
+               
+                <Share title={post.name} />
+              
               <Comment reCaptcha={reCaptcha} admin={admin} type={"products"} comments={post.comments} id={post._id} link={"ProductComment"} />
               
            </div>

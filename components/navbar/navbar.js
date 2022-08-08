@@ -3,14 +3,14 @@ import context from '../../helpers/context/authContext';
 import axios from "axios";
 import Slider from './slider/slider';
 import Image from 'next/image';
-import logo from './logo.png'
+
 
 
 const navbar = () => {
 
     const [scroll ,setScroll] = useState(0);
     const [show ,setShow] = useState(false);
-    const {find} = useContext(context);
+    const {find ,Api} = useContext(context);
     const [openSlider ,setOpenSlider] = useState(false);
 
     const handleScroll = () => {
@@ -24,7 +24,7 @@ const navbar = () => {
     }
 
     const logOut = async () => {
-       await axios.get("http://dreamweb.runflare.run/authentication/logout" , {withCredentials:true})
+       await axios.get(`${Api}/authentication/logout` , {withCredentials:true})
         window.location.reload()
     }
 
@@ -42,12 +42,9 @@ const navbar = () => {
         <nav className={'navbar'}>
             {openSlider == true && <div onClick={() => setOpenSlider(false)} className="backdrop"></div>}
             <Slider openSlider={openSlider} find={find} />
-            <div className="logo">
-                <circle>
-                    <div>
-             <p> دریم وب</p>
-            <b>Dream Web</b>
-            <Image layout={"fill"} src={logo} alt="دریم وب" /></div></circle></div>
+        <div className="logo">
+            <a href="/" ><Image layout={"fill"} src={"/images/dreamWeb.png"} alt="دریم وب" /></a>
+        </div>
             <div className="nav-bot">
             <div className="humburger" onClick={() => setOpenSlider(prevState => !prevState)}>
                 <div className="hums"></div>
@@ -55,9 +52,9 @@ const navbar = () => {
                 <div className="hums"></div>
             </div> 
                 <ul>
-                    <li><img src={"/uploads/home.png"} alt="home" /><a href="/"> خانه </a><hr /> </li>
+                    <li><img src={"/uploads/home.png"} alt="home" /><a href="/">  دریم وب </a><hr /> </li>
                     <li style={{zIndex:"85"}}>
-                        <img src={"/uploads/flash.png"} alt="flash" />
+                        <img src={"/uploads/down-arrow.png"} alt="flash" />
                       <a href="#"> خرید وبسایت </a><hr /> 
                         <ul style={{width:"180px",left: "-44%",zIndex:"85"}}>
                             <li><a href="/shop-website">خرید سایت فروشگاهی</a></li>
@@ -70,9 +67,9 @@ const navbar = () => {
                         </ul> 
                     </li>
                     <li><img src={"/uploads/seo.png"} alt="seo png" /><a href="/exclusive-website"> سایت اختصاصی </a><hr /> </li>
-                    <li><img src={"/uploads/word.png"} alt="seo png" /><a href="/Seo"> سئو </a><hr /></li>
-                    <li><img src={"/uploads/doc.png"} alt="articles" /><a href="/articles"> مقالات </a><hr /> </li>
-                    <li><img src={"/uploads/contact.png"} alt="contact us" /><a href="/contact-us"> تماس با ما </a><hr /> </li>
+                    <li><img src={"/uploads/world.png"} alt="seo png" /><a href="/Seo"> سئو </a><hr /></li>
+                    <li><img src={"/uploads/google-docs.png"} alt="articles" /><a href="/articles"> مقالات </a><hr /> </li>
+                    <li><img src={"/uploads/contact-mail.png"} alt="contact us" /><a href="/contact-us"> تماس با ما </a><hr /> </li>
                 </ul>
             </div>
             <div className="nav-login">

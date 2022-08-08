@@ -1,60 +1,133 @@
 import React,{useEffect, useState} from 'react';
-import {Line} from 'react-chartjs-2';
+import { Line, Bar } from "react-chartjs-2";
 
 
-const chart = ({info}) => {
 
-    const date_ob = new Date();
-    const [data ,setData] = useState({});
-    const  monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    let year = JSON.stringify(date_ob.getFullYear())
+const chart = ({info ,sells}) => {
+
+
+  
+    const d = new Date();
+    const year = d.getFullYear().toString();
+
+    console.log(year)
+
+    const filterSells = sells && sells.filter(res => res.year === year);
     const filterYear = info && info.filter(res => res.year === year);
-    const jan = filterYear && filterYear.filter(res => res.month === "Jan").length
-    const Feb = filterYear && filterYear.filter(res => res.month === "Feb").length
-    const Mar = filterYear && filterYear.filter(res => res.month === "Mar").length
-    const Apr = filterYear && filterYear.filter(res => res.month === "Apr").length
-    const May = filterYear && filterYear.filter(res => res.month === "May").length
-    const Jun = filterYear && filterYear.filter(res => res.month === "Jun").length
-    const Jul = filterYear && filterYear.filter(res => res.month === "Jul").length
-    const Aug = filterYear && filterYear.filter(res => res.month === "Aug").length
-    const Sep = filterYear && filterYear.filter(res => res.month === "Sep").length
-    const Oct = filterYear && filterYear.filter(res => res.month === "Oct").length
-    const Nov = filterYear && filterYear.filter(res => res.month === "Nov").length
-    const Dec = filterYear && filterYear.filter(res => res.month === "Dec").length
 
-    const getChart =() => {
-        setData({
-            labels: monthNamesShort,
+
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    
+
+let onepast = months[d.getMonth()];
+let twoPast = months[d.getMonth() - 1];
+let threePast = months[d.getMonth() - 2];
+let fourPast = months[d.getMonth() - 3];
+let fifthPast = months[d.getMonth() - 4];
+let sixth = months[d.getMonth() -5];
+let seventh = months[d.getMonth() - 6];
+let eight = months[d.getMonth() - 7];
+let ninth = months[d.getMonth() - 8];
+let ten = months[d.getMonth() - 9];
+let eleventh = months[d.getMonth() - 10];
+let twelve = months[d.getMonth() - 11];
+
+
+const getValue = (val) => {
+  return filterSells && filterSells.filter(res => res.month === val).length
+}
+
+const getview = (val) => {
+  return filterYear && filterYear.filter(res => res.month === val).length
+}
+
+
+    let chartExample1 = {
+        data: {
+            labels: [sixth ,fifthPast, fourPast, threePast, twoPast ,onepast],
             datasets: [
               {
                 label: 'تعداد بازدید ها (ماهیانه)',
-                data: [jan , Feb, Mar, Apr, May, Jun,Jul,Aug,Sep,Oct,Nov,Dec],
+                data: [
+                  //  getview(twelve) 
+                  // ,getview(eleventh)
+                  // ,getview(ten)
+                  // ,getview(ninth)
+                  // ,getview(eight)
+                  // ,getview(seventh)
+                  ,getview(sixth)
+                  ,getview(fifthPast)
+                  ,getview(fourPast)
+                  ,getview(threePast)
+                  ,getview(twoPast) 
+                  ,getview(onepast)
+                ],
                 backgroundColor: [
-                    "RGBA(255,87,34,1)",
+                    "#ddf0ff",
                 ],
                 lineTension: 0.4,  
                 fill: true,
                 pointRadius:0
               },
             ],
-          })
-    }
-    useEffect(() => {
-        getChart()
-    },[])
+          }
+        }
+
+let chartExample2 = {
+
+    data: {
+      labels: [fifthPast, fourPast, threePast, twoPast ,onepast],
+      datasets: [
+        {
+          label: "Sales",
+          data: [getValue(fifthPast), getValue(fourPast), getValue(threePast), getValue(twoPast) ,getValue(onepast) ],
+          maxBarThickness: 5,
+        },
+      ],
+    },
+  };
+
 
     return (
-        <div className="chart">
-            <div className="line-chart">
-           {jan && data.labels && <Line 
-            data={data} 
-            options={{responsive:true}}
+        <div className="chart"> 
+         <div className="Bar-chart">
+             <h1>تعداد سفارشات</h1>
+         <Bar
+          data={chartExample2.data}
+          options={{
+            responsive:true ,
+              plugins:{  legend: {display: false}},scales: {
+            x: {
+              grid: {
+                display: false
+              }
+            },
+            y: {
+                grid: {
+                  display: false
+                }
+              }, 
+            }
+        ,backgroundColor:"#fb6240",
+        maintainAspectRatio: false
+
+        }}
+        />
+         </div>
+    <div className="line-chart">
+         <h1>تعداد بازدید</h1>
+           {filterYear && <Line 
+             data={chartExample1.data} 
+             options={{responsive:true,maintainAspectRatio: false ,plugins:{  legend: {display: false}}}}
 
             />}
             </div>
-        </div>
+
+      </div>
 
     )
+
+
 }
 
 export default chart

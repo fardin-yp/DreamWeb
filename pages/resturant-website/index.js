@@ -1,15 +1,14 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from '../../components/footer/footer';
-import LiveChat from '../../components/liveChat/liveChat';
 import NoPost from '../../components/NoPost/NoPost';
 import Head from 'next/head';
 
 export async function getStaticProps() {
 
-  const getPosts = await fetch("http://dreamweb.runflare.run/allRoutes/resturant",{method:'GET'});
+  const getPosts = await fetch("https://dreamwebbackend.herokuapp.com/allRoutes/resturant",{method:'GET'});
   const json = await getPosts.json();
 
-  const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/resturant');
+  const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/resturant');
   const jsonSeo = await resSeo.json();
 
   return {
@@ -37,7 +36,6 @@ const index = ({posts ,jsonSeo}) => {
     <meta name="og:type" content={jsonSeo && jsonSeo[0].ogType}/>
     <meta property="og:locale" content="Fa_IR" /> 
   </Head>
-          <LiveChat />
             <Navbar />
             <div style={{background:"linear-gradient(90deg, #fc4a1a 0%, #f7b733 100%)"}} className="route">
               <h1>وبسایت های رستوران</h1>

@@ -82,11 +82,11 @@ p{
 .navbar {
   width: 100%;
   height: 105px;
-  background-color:#0d2040;
+  /* background-color:#0d2040; */
+  background-color: white;
   display: flex;
   justify-content: space-between;
   font-family:"iran-sans";
-  color: #0d2040;
   box-shadow: 0px 5px 8px rgba(0,0,0,0.1) , 0px 10px 15px rgba(0,0,0,0.1);
   z-index: 2;
 }
@@ -122,47 +122,12 @@ p{
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.logo circle {
-  width:82px;
-  height: 82px;
-  background-color:white;
-  border-radius: 50%;
-  display: flex;
-  justify-content:center;
-  align-items: center;
   position: relative;
 }
-.logo circle img {
-  position: absolute;
-  padding:20px;
-  opacity: 0.1;
-}
-.logo circle div {
-  width: 96%;
-  height: 96%;
-  position: absolute;
-  border:3px solid #00ff98;
-  border-radius:50%;
-  display: flex;
-  align-items: center;
-  justify-content:center;
-  color:#0f2242;
-  flex-wrap: wrap;
-}
-.logo circle div b {
- font-size:11px;
- margin-top: -50%;
- color:#7365c7;
-}
-.logo circle div p {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content:center;
-  font-size: 20px;
-  margin-top: 10px;
+
+.logo img {
+width: 100%;
+object-fit: cover;
 }
 .nav-bot ul {
   width: 100%;
@@ -186,7 +151,6 @@ p{
   justify-content: space-evenly;
   height: 75%;
   width: max-content;
-  color: white;
   cursor: pointer;
 }
 .nav-login .login-drop {
@@ -263,7 +227,10 @@ p{
   font-size: 13px;
 }
 .navbar li a {
-  color: white;
+  opacity: 0.75;
+}
+.navbar li img {
+  opacity: 0.75;
 }
 .navbar li ul li a {
   color: RGBA(13,32,64,0.99);
@@ -272,6 +239,7 @@ p{
   padding: 10px;
   border-radius: 10px;
   font-size: 12.8px;
+  opacity: 1;
 }
 .navbar ul li ul {
   position: absolute;
@@ -325,6 +293,9 @@ p{
   opacity: 1;
   transition: 0.5s ease;
 }
+.nav-login b {
+  color: #3f51b5;
+}
 .humburger {
   width: 40px;
   height: 40px;
@@ -334,14 +305,13 @@ p{
   cursor: pointer;
   display: none;
   margin-left: 10%;
-  background-color: RGBA(13,32,64,0.20);
   border-radius: 10px;
   z-index: 26;
 }
 .hums {
   width: 85%;
   height: 10%;
-  background-color: white;
+  background-color: #273f5b;
   border-radius: 10px;
 }
 .slider {
@@ -349,7 +319,7 @@ p{
   position: fixed;
   height: 100%;
   background-color: white;
-  top: 0;
+  bottom: 0;
   right: 0;
   transition: 0.6s ease-in-out;
   z-index: 50;
@@ -366,12 +336,16 @@ p{
   display:none;
 }
 .slider-top {
-  width: 100%;
+  width: 80%;
   height: 20%;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: center;
+  margin: auto;
+}
+.slider-top img {
+ object-fit: cover;
 }
 .slider-menu {
   width: 100%;
@@ -398,13 +372,13 @@ p{
   align-items: center;
   justify-content: flex-start;
 }
-.slider-top div {
+.slider-login {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
 }
-.slider-top div a {
+.slider-login a {
   width: 43%;
   height: 40px;
   display: flex;
@@ -416,12 +390,14 @@ p{
   border-radius: 10px;
   background:linear-gradient(90deg, #11998e 0%, #38ef7d 100%) ;
   color: white;
+  transition: 0.5s ease;
 }
 .slider-menu a div {
   display: flex;
   flex-flow: column;
   font-size: 15px;
   width: 100%;
+  transition: 0.5s ease;
 }
 .slider-menu a img {
   position: absolute;
@@ -459,6 +435,10 @@ p{
   position: relative;
   z-index:5;
 }
+.top-con div {
+  display: flex;
+  align-items: center;
+}
 .about {
   width: 100%;
   background-color:#3f51b5;
@@ -479,6 +459,11 @@ p{
 } 
 .about-us h1 {
   font-size: 20px;
+  font-weight: lighter;
+}
+.about-us p {
+  font-size: 14px;
+  opacity: 0.8;
 }
 .namad {
   width: 45%;
@@ -519,11 +504,17 @@ p{
   font-size: 14px;
 }
 .top-con img {
-  width: 24px;
+  width: 23px;
+  margin-left: 7px;
 }
 .top-con div {
   font-size: 16px;
   font-weight: 600;
+  margin-bottom: 10px;
+}
+.top-footer p {
+  opacity: 0.8;
+  font-size: 13px;
 }
 .bot-footer {
   width: 80%;
@@ -538,7 +529,8 @@ p{
 .top-footer a {
   margin-top: 20px;
   z-index: 4;
-  opacity: 0.9;
+  opacity: 0.8;
+  font-size: 13px;
 }
 .top-footer a:hover {
   color: #ffeb3b;
@@ -572,109 +564,148 @@ p{
 
 .login {
   width: 100%;
-  height: 713px;
+  min-height: 100%;
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: whitesmoke;
 }
 .login form {
-  width: 500px;
-  height: 72%;
+  width: 800px;
+  height: 500px;
   background-color: white;
   display: flex;
-  align-items: center;
-  flex-flow: column;
+  flex-flow: row-reverse;
+  position: relative;
   justify-content: space-between;
   border-radius: 10px;
   padding-bottom: 10px;
   box-shadow: 0px 2px 8px rgba(0,0,0,0.1) , 0px 0px 15px rgba(0,0,0,0.1);
+  padding: 0px 35px;
 }
-.login form a {
-  color: #4bd817;
+.right-login {
+  width: 40%;
+  height: 80%;
+  display: flex;
+  flex-flow: column;
+  justify-content:space-between ;
+}
+#sign-family {
+  width: 90%;
+  justify-content: space-between;
+  position: relative;
+  flex-direction: row;
+}
+#sign-family input{
+  width: 48%;
+  position: relative;
+}
+#password {
+  width: 48%;
+  position: relative;
+}
+#password input {
+  width: 100%;
+  padding: 8px;
+  z-index: 1;
+  position: relative;
+  margin: 8px 0px;
+}
+#password img{
+  position: absolute;
+  width: 20px;
+  opacity: 0.5;
+  left: 5%;
+  z-index: 10;
+}
+.right-login .sign-logo {
+  width: 50%;
+  height:100px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: right;
+  left: 7%;
+}
+.sign-logo img {
+  object-fit: cover;
+}
+.right-login b {
+  font-size: 21px;
+  font-weight: 800;
+}
+.right-login a {
+  color:#7365c7;
   font-size: 16px;
   font-weight: 600;
+  pointer-events: all;
 }
 .login form p {
   font-size: 13px;
+  width: 90%;
 }
 .login form input {
-  width: 70%;
-  padding: 2%;
-  border: none;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.400);
+  width: 90%;
+  padding: 3% 2%;
+  border: 2px solid rgba(0, 0, 0, 0.400);
   background: none;
+  border-radius: 4px;
 }
-.login button {
-  width: 70%;
-  padding: 2%;
+.login form button {
+  width: 30%;
+  padding: 5px 0px;
   border-radius: 10px;
   font-size: larger;
   border: none;
   color: white;
   position: relative;
-  background:linear-gradient(90deg, #11998e 0%, #38ef7d 100%) ;
-  font-weight: 600;
+  font-size: 14px;
+  background:#7365c7;
+  font-weight: 200;
+  right: 60%;
 }
-.login .loading-spinner{
-  width: 30px;
-  height: 30px;
-} 
+.login button:disabled {
+  opacity: 0.5;
+}
 .login input:focus {
   border-bottom: 2px solid rgba(0, 0, 0, 0.700);
 }
-.login div {
+.right-login div {
   display: flex;
   width: 70%;
   flex-flow: row-reverse;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content:flex-start;
 }
-.login form div{
+.right-login div{
    width: 81.5%;
    display: flex;
    align-items: center;
    justify-content:space-evenly;
 }
-.login form div input{
- width: 40%;
-}
-.login form img {
-  width: 38px;
-  height: 40px;
+.right-login input{
+ width: 90%;
+
 }
 .login .Auth-err {
-  margin-bottom: -30px;
-  margin-top: -25px;
+  width: 100%;
+  height: 20px;
   color: red;
   font-weight: 600;
+  margin-bottom: -20%;
 }
-.login h1 {
-  margin-top: -0.5%;
-  color: white;
-  width: 98%;
-  background:linear-gradient(90deg, #11998e 0%, #38ef7d 100%) ;
-  height: 100px;
+.left-login {
+  width: 59%;
+  height: 100%;
   display: flex;
-  margin-top: 1%;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-right: 1.8px solid #eceff4;
 }
-#password {
+.left-login img {
   width: 100%;
-  position: relative;
-}
-#password input {
-  width: 69%;
-}
-#password img {
-  position: absolute;
-  left: 17%;
-  opacity: 0.5;
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
+  object-fit: cover;
 }
 
 /* ///////////////// reset password /////////////// */
@@ -737,8 +768,7 @@ p{
   display: flex;
   height:max-content;
   font-size:12.5px;
-  margin-top:13px;
-  margin-bottom:-15px;
+  margin-top:12px;
   color:#fe0000;
 }
 .Auth-err label {
@@ -889,6 +919,15 @@ cursor: progress;
   color: white;
   font-size: 18px;
   margin-left: 20px;
+  border: 1px solid white;
+}
+.index div div a:last-child {
+  background-color:#ff5722;
+}
+.index div div a:hover {
+  background-color: white;
+  color: #0d2040;
+  border: 1px solid black;
 }
 .route-full {
   position: absolute;
@@ -979,15 +1018,75 @@ cursor: progress;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0px 2px 8px rgba(0,0,0,0.1) , 0px 0px 15px rgba(0,0,0,0.1);
-  margin: auto;
-  margin-top: 50px;
-  margin-bottom: -45px;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: space-evenly;
+  margin: auto;
+  margin-top: 4%;
+}
+.web-complete h1 {
+  margin: 0px;
+  font-size: 25px;
+}
+.web-complete a {
+  padding: 10px;
+  background-color:#4bd817 ;
+  border-radius: 10px;
+  color: white;
 }
 .web-complete p {
-  margin: -20px 0;
+  margin: -15px 0;
   opacity: 0.5;
+}
+.web-complete img {
+  width: 25%;
+  height: 50%;
+  object-fit: cover;
+}
+.full-loading {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50% , -50%);
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+  transition: 1s ease;
+  justify-content: center;
+}
+.full-loading circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 5px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border:4px solid #6197f5;
+  border-left:3.6px solid white;
+  border-bottom: 3.6px solid white;
+  border-radius: 50%; 
+  animation: spinner 1s linear infinite;
+  z-index: 2;
+  position: relative;
+  opacity: 0.8;
+
+}
+.full-loading img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  position: absolute;
+  top: 36.5%;
+}
+.full-loading p {
+  opacity: 0.7;
+}
+@keyframes spinner {
+  to{
+      transform: rotate(360deg);
+  }
 }

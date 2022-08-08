@@ -1,17 +1,19 @@
-import { useState ,useEffect } from 'react';
+import { useState ,useEffect, useContext } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import Back from './BackGround.png';
 import Black from './NO.png';
+import context from "../../helpers/context/authContext"
 
 const Footer = () => {
 
     const [namad ,setNamad] = useState(null);
     const [links ,setLinks] = useState(null);
+    const {Api} = useContext(context)
 
 useEffect(() => {
   const getNamad = async () => {
-      await axios.get(`http://dreamweb.runflare.run/allRoutes/namad`,{withCredentials:true}).then(res => {
+      await axios.get(`/api/Admin/namad`,{withCredentials:true}).then(res => {
            setNamad(res.data)
        })
   }
@@ -20,7 +22,7 @@ useEffect(() => {
 
 useEffect(() => {
     const getLinks = async () => {
-        await axios.get(`http://dreamweb.runflare.run/allRoutes/Links`,{withCredentials:true}).then(res => {
+        await axios.get(`/api/Admin/Links`,{withCredentials:true}).then(res => {
             setLinks(res.data)
          })
     }
@@ -45,7 +47,7 @@ useEffect(() => {
         <div className="top-footer">
         <Image id="back-image" src={Black} alt="" layout={"fill"}  />
            <div className="top-con">
-            <div><img src="/uploads/seo.png" alt="seo" />خرید وبسایت:</div>
+            <div style={{alignItems:"center"}}><img src="/uploads/seo2 (2).png" alt="seo" />خرید وبسایت:</div>
                 <a href="/shop-website" >خرید سایت فروشگاهی</a>
                 <a href="/news-website" >خرید سایت خبری</a>
                 <a href="/company-website" >خرید سایت شرکتی</a>

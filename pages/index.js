@@ -1,21 +1,20 @@
 import { Fragment } from 'react';
 import Home from '../components/Home/Home';
 import Head from 'next/head';
-import LiveChat from '../components/liveChat/liveChat';
 
 export async function getStaticProps() {
 
 
-    const recaptcha = "6LfMd88dAAAAANh6pGI5JNg-q4m3gkwi8BlYKmHo" 
+    const recaptcha = "6LfMd88dAAAAANh6pGI5JNg-q4m3gkwi8BlYKmHo";
 
-    const res = await fetch(`http://dreamweb.runflare.run/allRoutes/articles`);
+    const res = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/articles`);
     const json = await res.json();
 
-    const resSeo = await fetch('http://dreamweb.runflare.run/allRoutes/Seo/home');
+    const resSeo = await fetch('https://dreamwebbackend.herokuapp.com/allRoutes/Seo/home');
     const jsonSeo = await resSeo.json();
 
-    const getLinks = await fetch(`http://dreamweb.runflare.run/allRoutes/Links`)
-     const links = await getLinks.json()
+    const getLinks = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/Links`);
+     const links = await getLinks.json();
        
 
     return {
@@ -31,7 +30,7 @@ export async function getStaticProps() {
   }
   
 
-export default function index ({json,recaptcha ,jsonSeo ,links }) {
+export default function index ({ json ,recaptcha ,jsonSeo ,links }) {
 
  return (
  <Fragment>
@@ -49,7 +48,7 @@ export default function index ({json,recaptcha ,jsonSeo ,links }) {
     <meta property="og:locale" content="Fa_IR" /> 
   </Head>
      <Home articles={json.findPost} Questions={json.findQuestions} json={recaptcha} links={links} />
-     <LiveChat />
+     
  </Fragment >
  )
 }

@@ -1,8 +1,9 @@
-import {useState ,useEffect} from 'react';
+import {useState ,useEffect ,useContext} from 'react';
 import axios from 'axios';
 import Edit from '../editor/edit';
 import Loading from '../images/loadingshop.gif';
 import Image from 'next/image';
+import context from '../../../helpers/context/authContext';
 
 
 const editAricle = () => {
@@ -15,7 +16,8 @@ const editAricle = () => {
     const [filter ,setFilter] = useState('');
     const [edit ,setEdit] = useState(false);
     const [id, setId] = useState(false);
-    const [deleteProduct , setDeleteProduct] = useState(null)
+    const [deleteProduct , setDeleteProduct] = useState(null);
+    const {Api} = useContext(context)
 
    const postHandler = async (e) =>{    
         e.preventDefault();
@@ -27,7 +29,7 @@ const editAricle = () => {
         formData.append("id" , id);
         formData.append("info" ,info);
     
-        await axios.put("http://dreamweb.runflare.run/adminRoute/ArticleUpdate" , formData ,{withCredentials:true} ).then(res => {
+        await axios.put(`${Api}/adminRoute/ArticleUpdate` , formData ,{withCredentials:true} ).then(res => {
             if(res.data.errMessage){
                 alert(res.data.errMessage)
                 setErr(res.data.errMessage)
@@ -44,7 +46,7 @@ const editAricle = () => {
   }    
 }
 const getArticles = async () => {
-    await axios.get('http://dreamweb.runflare.run/allRoutes/articles',{withCredentials:true}).then(res => {
+    await axios.get(`${Api}/allRoutes/articles`,{withCredentials:true}).then(res => {
         setArticles(res.data.findPost)
     })
 }
@@ -62,7 +64,7 @@ const deletePR = async (e) => {
     e.preventDefault();
     const post ={ image:deleteProduct.image}
     setLoading(true)
-    await axios.put(`http://dreamweb.runflare.run/adminRoute/delete/articles/${deleteProduct._id} `,post ,{withCredentials:true} ).then(res => {
+    await axios.put(`${Api}/adminRoute/delete/articles/${deleteProduct._id} `,post ,{withCredentials:true} ).then(res => {
         alert(res.data.Message)
         setLoading(false);
         setDeleteProduct(null)
@@ -82,25 +84,24 @@ const sure = (e) => {
                 <h1>آیا این پست حذف شود ؟</h1>
                 <button style={{background:"#fe1919"}} onClick={deletePR}> حذف پست</button>
             </div>}
-{!edit && <form style={{height:"100%",marginTop:"-10px"}} encType="multipart/form-data">
-        <div style={{height:"max-content",width:"90%" ,background:"#3f51b5",padding:"10px" 
-            ,borderRadius:"10px",color:"white"}}>ویرایش مقالات
-             
-            </div>
-        <input style={{marginTop:"10px"}} placeholder="جستجو..." onChange={(e) => setFilter(e.target.value)} />
+{!edit && <div className="edit-tabels" style={{zIndex:"13"}}>
+        <div>
+        <label>
+            <b>ویرایش مقالات</b>
+            <input style={{marginTop:"10px"}} placeholder="جستجو..." onChange={(e) => setFilter(e.target.value)} />
+        </label>
         {articles.length === 0 && <div style={{width:"100%" ,height:"450px" ,position:"relative",margin:"auto"}}>
                 <Image src={Loading} layout={"fill"} alt="" />
             </div>}
-        <div className="tableEdit-holder">
-{articles.length > 0 && <table className="edit-table" > 
+         {articles.length > 0 && <table> 
                 <thead  >
-                    <th style={{padding:"20px" ,background:"#673ab7"}}>
+                    <th >
                         <a href="#">تصویر</a>
                     </th>
-                    <th style={{padding:"20px" ,background:"#673ab7"}}>
+                    <th >
                         <a href="#"> نام </a>
                     </th>
-                    <th style={{padding:"20px" ,width:"20%" ,background:"#673ab7"}}>
+                    <th >
                         <a href="#">دیدگاه</a>
                     </th>
                 </thead>
@@ -114,16 +115,16 @@ const sure = (e) => {
                             setDes(res.des)
                             setInfo(res.info)
                             setId(res._id)
-                        }} className="tr-all">
+                        }} >
 
                        <td>
                            <img src={`/uploads/${res.image}`} alt="" />
                        </td>
                        <td >
-                           <a>{res.title}</a>
+                           {res.title}
                        </td>
                        <td >
-                           <a>{res.comments.length}</a>
+                           {res.comments.length}
                        </td>
                    </tr>
                    })}
@@ -131,8 +132,8 @@ const sure = (e) => {
       <tfoot></tfoot>
 
         </table>}
-                    </div>
-            </form>}
+        </div>
+    </div>}
             
             {edit.title && 
             <form style={{height:"100%",marginTop:"-10px"}} encType="multipart/form-data">
