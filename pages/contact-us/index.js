@@ -51,7 +51,7 @@ const index = ({json ,jsonSeo ,links}) => {
         try {
            const response =  await fetch(`/api/contact` ,{
                method:"POST",
-               body:JSON.stringify({ex}),
+               body:JSON.stringify(ex),
                headers:{
                    "Content-Type":"application/json"
                }
