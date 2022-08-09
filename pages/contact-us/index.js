@@ -1,7 +1,6 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from '../../components/footer/footer';
 import {useContext, useRef, useState ,useEffect} from 'react';
-import axios from 'axios';
 import ReCAPTCHA from 'react-google-recaptcha';
 import context from '../../helpers/context/authContext'
 import Head from 'next/head';
@@ -50,16 +49,17 @@ const index = ({json ,jsonSeo ,links}) => {
         reRef.current.reset();
         const ex = {email ,message ,name ,des ,captcha};
         try {
-            await axios.post(`/api/contact` , ex ,{withCredentials:true}).then(res => {
-              if(res.data.errMessage){
-                setErr(res.data)
-                setLoading(false)
-            }
-            setEMessage(res.data.Message)
-            setLoading(false)
-            setErr(null)
-            });
- 
+           const response =  await fetch(`/api/contact` ,{
+               method:"POST",
+               body:JSON.stringify({ex}),
+               headers:{
+                   "Content-Type":"application/json"
+               }
+           })
+
+           const data = await response.json();
+           console.log(data);
+            
         }catch(err){
  
         }
