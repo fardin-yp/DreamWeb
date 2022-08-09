@@ -49,9 +49,10 @@ const index = ({json ,jsonSeo ,links}) => {
         reRef.current.reset();
         const ex = {email ,message ,name ,des ,captcha};
         try {
-           const response =  await fetch(`/api/contact` ,{
+           const response =  await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/contact` ,{
                method:"POST",
                body:JSON.stringify(ex),
+               credentials:"include",
                headers:{
                    "Content-Type":"application/json"
                }
