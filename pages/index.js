@@ -16,7 +16,7 @@ export async function getStaticProps() {
     const getLinks = await fetch(`https://dreamwebbackend.herokuapp.com/allRoutes/Links`);
      const links = await getLinks.json();
 
-     const getSession = await fetch("https://dreamwebbackend.herokuapp.com/session");
+    const getSession = await fetch("https://dreamwebbackend.herokuapp.com/session");
        
 
     return {
