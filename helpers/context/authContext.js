@@ -12,15 +12,15 @@ const AuthContext = createContext();
     const Api = "https://dreamwebbackend.herokuapp.com"
     const [users ,setUsers] = useState(null);
 
-    useEffect(() => {
-      socket.current = io("ws://localhost:27017")
-     } , []);
+    // useEffect(() => {
+    //   socket.current = io("ws://localhost:27017")
+    //  } , []);
  
-    useEffect(() => {
-       socket.current.on("getOnlineUsers" , OnlineUsers => {
-          setUsers(OnlineUsers)
-       })
-     },[]);
+    // useEffect(() => {
+    //    socket.current.on("getOnlineUsers" , OnlineUsers => {
+    //       setUsers(OnlineUsers)
+    //    })
+    //  },[]);
 
     async function getUserLoggedIn() {
       try{
